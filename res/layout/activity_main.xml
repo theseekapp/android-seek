@@ -9,14 +9,25 @@
     tools:context=".MainActivity"
     android:orientation="vertical">
 
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
     <EditText
         android:id="@+id/et_main"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"/>
+    <Button
+        android:id="@+id/b_mic_main"
+        android:text="Mic"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+    </LinearLayout>
 
     <Button
         android:id="@+id/b_gen_main"
-        android:text="Generate"
+        android:text="Seek"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 

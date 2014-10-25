@@ -1,7 +1,9 @@
 package stejasvin.seekgds;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -10,21 +12,50 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FilenameFilter;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+
 
 public class MainActivity extends ActionBarActivity {
+
+    public final int REQ_CODE_SPEECH_INPUT = 0;
+
+    EditText etSearch;  //Search string
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        etSearch = (EditText)findViewById(R.id.et_main);
         Button bGen = (Button)findViewById(R.id.b_gen_main);
         bGen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EditText etSearch = (EditText)findViewById(R.id.et_main);
-                if(!etSearch.getText().toString().equals(""))
-                    Toast.makeText(MainActivity.this,etSearch.getText().toString()+"Generating...",Toast.LENGTH_LONG).show();
+
+
+                if(!etSearch.getText().toString().equals("")) {
+                    Toast.makeText(MainActivity.this, etSearch.getText().toString() + "\"Seeking\"...", Toast.LENGTH_LONG).show();
+
+                    List<String> totList = searchThruFiles(etSearch.getText().toString());
+                    if(totList!=null && totList.size()>0){
+
+                        Intent intent = new Intent(MainActivity.this,SearchListActivity.class);
+                        intent.putExtra("searchList",totList.toArray());
+                        startActivity(intent);
+                    }else{
+                        Toast.makeText(MainActivity.this, etSearch.getText().toString() + "Not Found", Toast.LENGTH_LONG).show();
+                    }
+
+                }
                 else
                     Toast.makeText(MainActivity.this,"Enter valid stuff",Toast.LENGTH_LONG).show();
             }
@@ -39,6 +70,84 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
+        Button bMic = (Button) findViewById(R.id.b_mic_main);
+//
+//        // hide the action bar
+//        getActionBar().hide();
+
+        bMic.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                promptSpeechInput();
+            }
+        });
+
+    }
+
+    private List<String> searchThruFiles(String s) {
+        List<String> totLineList = new ArrayList<String>();
+        File libDir = new File(Constants.LIB_PATH);
+        FilenameFilter filenameFilter = new FilenameFilter() {
+            @Override
+            public boolean accept(File file, String s) {
+                if(s.endsWith(".txt"))
+                    return true;
+                return false;
+            }
+        };
+        //Filtering only text files
+        File[] listFiles = libDir.listFiles(filenameFilter);
+        if(listFiles == null)
+            return totLineList;
+        if (listFiles.length > 0) {
+            for (int i = 0; i < listFiles.length; i++) {
+                if (listFiles[i].isFile()) {
+                    totLineList.addAll(findWord(s,listFiles[i]));
+                }
+            }
+        }
+        return totLineList;
+    }
+
+    /**
+     * Showing google speech input dialog
+     * */
+    private void promptSpeechInput() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+                getString(R.string.speech_prompt));
+        try {
+            startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
+        } catch (ActivityNotFoundException a) {
+            Toast.makeText(getApplicationContext(),
+                    getString(R.string.speech_not_supported),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Receiving speech input
+     * */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case REQ_CODE_SPEECH_INPUT: {
+                if (resultCode == RESULT_OK && null != data) {
+
+                    ArrayList<String> result = data
+                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                    etSearch.setText(result.get(0));
+                }
+                break;
+            }
+
+        }
     }
 
 
@@ -59,5 +168,31 @@ public class MainActivity extends ActionBarActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public List<String> findWord(String word, File file){
+        List<String> stringList=new ArrayList<String>();
+        try{
+            BufferedReader input = new BufferedReader(
+                    new InputStreamReader(
+                            new FileInputStream(file)));
+
+
+            String line;
+
+            ArrayList<Integer> list=new ArrayList<Integer>();
+            while((line=input.readLine())!=null){
+                if(line.indexOf(word)>-1){
+                    list.add(line.indexOf(word));
+                    stringList.add(line);
+                }
+            }
+
+            input.close();
+        }
+        catch(Exception ex){
+            ex.printStackTrace();
+        }
+        return stringList;
     }
 }
