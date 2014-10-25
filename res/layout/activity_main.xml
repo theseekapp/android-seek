@@ -15,7 +15,7 @@
 
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+        android:layout_height="410dp">
 
         <ImageView
             android:id="@+id/imageView"
@@ -39,31 +39,28 @@
 
             <Button
                 android:id="@+id/b_close_main"
-                android:layout_width="wrap_content"
+                android:layout_width="41dp"
                 android:layout_height="fill_parent"
-                android:layout_weight="0.25"
-                android:background="@drawable/left_bg" />
+                android:background="@drawable/close" />
 
             <EditText
                 android:id="@+id/et_main"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/searchspace" />
+                android:layout_height="fill_parent"
+                android:layout_weight="1.03"
+                android:background="#ffffffff" />
 
             <Button
                 android:id="@+id/b_mic_main"
-                android:layout_width="wrap_content"
+                android:layout_width="45dp"
                 android:layout_height="fill_parent"
-                android:layout_weight="0.3"
-                android:background="@drawable/voice_new" />
+                android:background="@drawable/voice" />
 
             <Button
                 android:id="@+id/b_gen_main"
-                android:layout_width="wrap_content"
+                android:layout_width="53dp"
                 android:layout_height="fill_parent"
-                android:layout_weight="0.1"
-                android:background="@drawable/right_bg" />
+                android:background="@drawable/seek" />
 
         </LinearLayout>
     </RelativeLayout>
@@ -74,7 +71,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="Go to Library"
-        android:visibility="gone" />
+        android:visibility="visible" />
 
 
 </LinearLayout>

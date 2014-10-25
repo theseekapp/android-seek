@@ -1,13 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_margin="10sp">
 
-    <CheckBox
+    <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="    New CheckBox"
-        android:id="@+id/cb_lib_sli"
-        android:layout_gravity="center_horizontal" />
+        android:orientation="horizontal"
+        android:layout_gravity="center_vertical"
+        android:layout_marginBottom="2sp"
+        android:layout_marginTop="2sp"
+        android:layout_marginLeft="10sp">
+
+        <TextView
+            android:id="@+id/tv_lib_sli"
+            android:text="Hello"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:textSize="20sp"
+            android:gravity="center_vertical"
+            android:textColor="#544749"/>
+
+        <CheckBox
+            android:id="@+id/cb_lib_sli"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|right"
+            android:layout_marginRight="10sp"
+            android:button="@drawable/check_box"
+            android:scaleX="0.4"
+            android:scaleY="0.4"
+            android:background="#ffffffff"
+            android:checked="false" />
+
+
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="2sp"
+        android:background="#8d0c1e" />
+
 </LinearLayout>

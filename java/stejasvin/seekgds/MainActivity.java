@@ -73,12 +73,6 @@ public class MainActivity extends ActionBarActivity {
         });
 
         Button bMic = (Button) findViewById(R.id.b_mic_main);
-
-        Button bMic = (Button) findViewById(R.id.b_mic_main);
-//
-//        // hide the action bar
-//        getActionBar().hide();
-
         bMic.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -87,6 +81,14 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
+        Button bClose = (Button) findViewById(R.id.b_close_main);
+        bClose.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                etSearch.setText("");
+            }
+        });
     }
 
     private List<String> searchThruFiles(String s) {

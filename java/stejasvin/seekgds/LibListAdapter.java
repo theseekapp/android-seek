@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -47,7 +48,8 @@ public class LibListAdapter extends ArrayAdapter {
         }
 
         CheckBox checkbox = (CheckBox) row.findViewById(R.id.cb_lib_sli);
-        checkbox.setText(stringList.get(position));
+        TextView tv = (TextView) row.findViewById(R.id.tv_lib_sli);
+        tv.setText(stringList.get(position));
 
         /*if(position==0) {
             tvCourse.setText("List of Strings");
