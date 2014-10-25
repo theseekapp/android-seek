@@ -34,6 +34,8 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        File dir = new File(Constants.LIB_PATH);
+        dir.mkdirs();
 
         etSearch = (EditText)findViewById(R.id.et_main);
         Button bGen = (Button)findViewById(R.id.b_gen_main);
@@ -47,14 +49,14 @@ public class MainActivity extends ActionBarActivity {
 
                     List<String> totList = searchThruFiles(etSearch.getText().toString());
                     if(totList!=null && totList.size()>0){
-
+                        String[] tempList = new String[100];
                         Intent intent = new Intent(MainActivity.this,SearchListActivity.class);
-                        intent.putExtra("searchList",totList.toArray());
+                        totList.toArray(tempList);
+                        intent.putExtra("searchList",tempList);
                         startActivity(intent);
                     }else{
                         Toast.makeText(MainActivity.this, etSearch.getText().toString() + "Not Found", Toast.LENGTH_LONG).show();
                     }
-
                 }
                 else
                     Toast.makeText(MainActivity.this,"Enter valid stuff",Toast.LENGTH_LONG).show();
@@ -69,6 +71,8 @@ public class MainActivity extends ActionBarActivity {
                 startActivity(intent);
             }
         });
+
+        Button bMic = (Button) findViewById(R.id.b_mic_main);
 
         Button bMic = (Button) findViewById(R.id.b_mic_main);
 //
@@ -97,7 +101,7 @@ public class MainActivity extends ActionBarActivity {
             }
         };
         //Filtering only text files
-        File[] listFiles = libDir.listFiles(filenameFilter);
+        File[] listFiles = libDir.listFiles();
         if(listFiles == null)
             return totLineList;
         if (listFiles.length > 0) {
