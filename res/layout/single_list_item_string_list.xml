@@ -43,6 +43,6 @@
     <ImageView
         android:layout_width="fill_parent"
         android:layout_height="2sp"
-        android:background="#8d0c1e" />
+        android:background="#c5b9bb" />
 
 </LinearLayout>

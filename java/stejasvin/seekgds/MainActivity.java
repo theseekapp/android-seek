@@ -18,7 +18,6 @@ import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 
@@ -43,16 +42,15 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onClick(View view) {
 
-
                 if(!etSearch.getText().toString().equals("")) {
                     Toast.makeText(MainActivity.this, etSearch.getText().toString() + "\"Seeking\"...", Toast.LENGTH_LONG).show();
 
-                    List<String> totList = searchThruFiles(etSearch.getText().toString());
+                    ArrayList<SearchResult> totList = searchThruFiles(etSearch.getText().toString());
                     if(totList!=null && totList.size()>0){
                         String[] tempList = new String[100];
                         Intent intent = new Intent(MainActivity.this,SearchListActivity.class);
-                        totList.toArray(tempList);
-                        intent.putExtra("searchList",tempList);
+                        //totList.toArray(tempList);
+                        intent.putParcelableArrayListExtra("searchList",totList);
                         startActivity(intent);
                     }else{
                         Toast.makeText(MainActivity.this, etSearch.getText().toString() + "Not Found", Toast.LENGTH_LONG).show();
@@ -91,8 +89,8 @@ public class MainActivity extends ActionBarActivity {
         });
     }
 
-    private List<String> searchThruFiles(String s) {
-        List<String> totLineList = new ArrayList<String>();
+    private ArrayList<SearchResult> searchThruFiles(String s) {
+        ArrayList<SearchResult> totSearchList = new ArrayList<SearchResult>();
         File libDir = new File(Constants.LIB_PATH);
         FilenameFilter filenameFilter = new FilenameFilter() {
             @Override
@@ -105,15 +103,15 @@ public class MainActivity extends ActionBarActivity {
         //Filtering only text files
         File[] listFiles = libDir.listFiles();
         if(listFiles == null)
-            return totLineList;
+            return totSearchList;
         if (listFiles.length > 0) {
             for (int i = 0; i < listFiles.length; i++) {
                 if (listFiles[i].isFile()) {
-                    totLineList.addAll(findWord(s,listFiles[i]));
+                    totSearchList.addAll(findWord(s,listFiles[i]));
                 }
             }
         }
-        return totLineList;
+        return totSearchList;
     }
 
     /**
@@ -176,21 +174,25 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public List<String> findWord(String word, File file){
-        List<String> stringList=new ArrayList<String>();
+    public ArrayList<SearchResult> findWord(String word, File file){
+        ArrayList<SearchResult> searchList=new ArrayList<SearchResult>();
         try{
             BufferedReader input = new BufferedReader(
                     new InputStreamReader(
                             new FileInputStream(file)));
-
-
             String line;
 
             ArrayList<Integer> list=new ArrayList<Integer>();
             while((line=input.readLine())!=null){
                 if(line.indexOf(word)>-1){
                     list.add(line.indexOf(word));
-                    stringList.add(line);
+                    SearchResult searchResult = new SearchResult();
+                    searchResult.setFileName(file.getName());
+                    searchResult.setFilePath(file.getPath());
+                    searchResult.setSeekString("1:15");
+                    searchResult.setSeekTime(12000);
+                    searchResult.setSubtitle(line);
+                    searchList.add(searchResult);
                 }
             }
 
@@ -199,6 +201,6 @@ public class MainActivity extends ActionBarActivity {
         catch(Exception ex){
             ex.printStackTrace();
         }
-        return stringList;
+        return searchList;
     }
 }

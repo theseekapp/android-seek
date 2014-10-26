@@ -4,12 +4,17 @@
 package stejasvin.seekgds;
 
 import android.content.Context;
+import android.media.MediaPlayer;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,18 +27,19 @@ import java.util.List;
 
 public class SearchListAdapter extends ArrayAdapter {
 
-    List<String> stringList;
+    List<SearchResult> searchList;
     int textViewResourceId = R.layout.single_list_item_string_search;
 
     /**
      * Context
      */
     private Context context;
+    MediaPlayer mp = new MediaPlayer();
 
-    public SearchListAdapter(Context context, List<String> stringList) {
-        super(context, R.layout.single_list_item_string_search, stringList);
+    public SearchListAdapter(Context context, ArrayList<SearchResult> searchList) {
+        super(context, R.layout.single_list_item_string_search, searchList);
         this.context = context;
-        this.stringList = stringList;
+        this.searchList = searchList;
 
     }
 
@@ -45,20 +51,34 @@ public class SearchListAdapter extends ArrayAdapter {
             row = inflater.inflate(textViewResourceId, parent, false); // inflate view from xml file
         }
 
-        TextView textView = (TextView) row.findViewById(R.id.tv_search_sli);
-        textView.setText(stringList.get(position));
+        final SearchResult searchResult = searchList.get(position);
 
-        /*if(position==0) {
-            tvCourse.setText("List of Strings");
-            tvCourse.setTextSize(30);
-            tvCourse.setPadding(5,10,5,10);
+        TextView tvName = (TextView) row.findViewById(R.id.tv_filename_search_sli);
+        tvName.setText(searchResult.getFileName() + " : " + searchResult.getSeekString());
 
-        }else {
-            tvCourse.setTextSize(20);
-            tvCourse.setPadding(5,10,5,10);
-            tvCourse.setText(stringList.get(position-1).getName());
-            tvCenter.setText(stringList.get(position-1).getCenter());
-        }*/
+        TextView tvSubs = (TextView) row.findViewById(R.id.tv_search_sli);
+        tvSubs.setText(searchResult.getSubtitle());
+
+        Button bPlay = (Button) row.findViewById(R.id.b_play_sli);
+        bPlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (mp.isPlaying())
+                    mp.stop();
+                else {
+                    try {
+                        mp.setDataSource(Constants.LIB_PATH + "/Oh Penne.mp3");
+                        mp.start();
+                        mp.seekTo(searchResult.seekTime);
+                    } catch (IOException e) {
+                        Toast.makeText(context, "Error in playing.. " + searchResult.getSubtitle(), Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
         return row;
     }
 

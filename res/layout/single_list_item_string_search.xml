@@ -12,6 +12,7 @@
         android:orientation="horizontal">
 
         <Button
+            android:id="@+id/b_play_sli"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Play" />

@@ -7,8 +7,7 @@ import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.ArrayList;
 
 public class SearchListActivity extends ActionBarActivity {
 
@@ -17,17 +16,17 @@ public class SearchListActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_list);
 
-        String[] strArray = getIntent().getStringArrayExtra("searchList");
-        if(strArray == null || strArray.length==0) {
+        ArrayList<SearchResult> searchArray = getIntent().getParcelableArrayListExtra("searchList");
+        if(searchArray == null || searchArray.size()==0) {
             Toast.makeText(SearchListActivity.this, "No results found", Toast.LENGTH_LONG).show();
             return;
         }
 
-        List<String> stringList = Arrays.asList(strArray);
+        //ArrayList<SearchResult> stringList = Arrays.asList(searchArray);
         //TODO Make this list hold checkbox also, maybe use sharedprefs
 
         ListView list = (ListView)findViewById(R.id.list_search);
-        list.setAdapter(new SearchListAdapter(this,stringList));
+        list.setAdapter(new SearchListAdapter(this,searchArray));
     }
 
 
