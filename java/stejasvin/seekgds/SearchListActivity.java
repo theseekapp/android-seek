@@ -1,6 +1,7 @@
 package stejasvin.seekgds;
 
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -11,6 +12,7 @@ import android.speech.RecognizerIntent;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -79,7 +81,7 @@ public class SearchListActivity extends ActionBarActivity {
 
         searchArray = getIntent().getParcelableArrayListExtra("searchList");
         if(searchArray == null || searchArray.size()==0) {
-            Toast.makeText(SearchListActivity.this, "No results found", Toast.LENGTH_LONG).show();
+            Toast.makeText(SearchListActivity.this, "No results found", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -88,7 +90,7 @@ public class SearchListActivity extends ActionBarActivity {
             public void onClick(View view) {
 
                 if(!etSearch.getText().toString().equals("")) {
-                    Toast.makeText(SearchListActivity.this, etSearch.getText().toString() + "\"Seeking\"...", Toast.LENGTH_LONG).show();
+                    Toast.makeText(SearchListActivity.this, "\"Seeking\"...", Toast.LENGTH_SHORT).show();
 
                     ArrayList<SearchResult> totList = searchThruFiles(etSearch.getText().toString());
                     if(totList!=null && totList.size()>0){
@@ -97,12 +99,16 @@ public class SearchListActivity extends ActionBarActivity {
                         if(searchListAdapter!=null)
                             searchListAdapter.notifyDataSetChanged();
 
+                        InputMethodManager imm = (InputMethodManager)getSystemService(
+                                Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
+
                     }else{
-                        Toast.makeText(SearchListActivity.this, etSearch.getText().toString() + "Not Found", Toast.LENGTH_LONG).show();
+                        Toast.makeText(SearchListActivity.this, "Results Not Found", Toast.LENGTH_SHORT).show();
                     }
                 }
                 else
-                    Toast.makeText(SearchListActivity.this,"Enter valid stuff",Toast.LENGTH_LONG).show();
+                    Toast.makeText(SearchListActivity.this,"Enter valid stuff",Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -229,7 +235,7 @@ public class SearchListActivity extends ActionBarActivity {
                                     TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.
                                             toMinutes((long) startTime)))
             );
-            seekbar.setProgress((int)startTime);
+            seekbar.setProgress((int)(startTime/finalTime));
             myHandler.postDelayed(UpdateSongTime,100);
             bPause.setEnabled(true);
             bPlay.setEnabled(false);
@@ -249,7 +255,7 @@ public class SearchListActivity extends ActionBarActivity {
                                     TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.
                                             toMinutes((long) startTime)))
             );
-            seekbar.setProgress((int)startTime);
+            seekbar.setProgress((int)(startTime/finalTime));
             myHandler.postDelayed(this, 100);
         }
     };

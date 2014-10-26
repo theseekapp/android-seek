@@ -10,6 +10,45 @@
     android:orientation="vertical"
     android:background="#f7f3f0">
 
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="45sp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center_vertical"
+        android:orientation="horizontal"
+        android:background="#8d0c1e"
+        android:padding="3sp">
+
+        <Button
+            android:id="@+id/b_close_main"
+            android:layout_width="41dp"
+            android:layout_height="fill_parent"
+            android:background="@drawable/close" />
+
+        <EditText
+            android:id="@+id/et_lib"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_weight="1.03"
+            android:background="#ffffffff"
+            android:paddingLeft="5sp" />
+
+        <Button
+            android:id="@+id/b_mic_main"
+            android:layout_width="45dp"
+            android:layout_height="fill_parent"
+            android:background="@drawable/voice" />
+
+        <Button
+            android:id="@+id/b_gen_main"
+            android:layout_width="53dp"
+            android:layout_height="fill_parent"
+            android:background="@drawable/seek" />
+
+    </LinearLayout>
+
     <ListView
         android:id="@+id/list_list"
         android:layout_width="match_parent"
