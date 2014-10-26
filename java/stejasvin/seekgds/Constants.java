@@ -8,5 +8,6 @@ import android.os.Environment;
 public class Constants {
 
     public static final String LIB_PATH = Environment.getExternalStorageDirectory()+"/SeekLib";
+    public static final String[] files = {"Pinocchio","WarAndPeace","OliverTwist"};
 
 }

@@ -9,8 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -30,12 +32,13 @@ public class LibListAdapter extends ArrayAdapter {
      * Context
      */
     private Context context;
+    HashMap<String,String> map;
 
-
-    public LibListAdapter(Context context, List<String> stringList) {
+    public LibListAdapter(Context context, List<String> stringList, HashMap<String,String> map) {
         super(context, R.layout.single_list_item_string_list, stringList);
         this.context = context;
         this.stringList = stringList;
+        this.map = map;
 
     }
 
@@ -48,6 +51,20 @@ public class LibListAdapter extends ArrayAdapter {
         }
 
         CheckBox checkbox = (CheckBox) row.findViewById(R.id.cb_lib_sli);
+        if(MainActivity.cbMap.get(Constants.files[position]).equals("1"))
+            checkbox.setChecked(true);
+        else
+            checkbox.setChecked(false);
+
+        checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(b)
+                    map.put(Constants.files[position],"1");
+                else
+                    map.put(Constants.files[position],"0");
+            }
+        });
         TextView tv = (TextView) row.findViewById(R.id.tv_lib_sli);
         tv.setText(stringList.get(position));
 

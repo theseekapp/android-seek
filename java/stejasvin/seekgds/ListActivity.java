@@ -11,6 +11,8 @@ import java.util.List;
 
 public class ListActivity extends ActionBarActivity {
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,10 +22,11 @@ public class ListActivity extends ActionBarActivity {
         stringList.add("Pinocchio.mp3");
         stringList.add("WarAndPeace.mp3");
         stringList.add("OliverTwist.mp3");
+
         //TODO Make this list hold checkbox also, maybe use sharedprefs
 
         ListView list = (ListView)findViewById(R.id.list_list);
-        list.setAdapter(new LibListAdapter(this,stringList));
+        list.setAdapter(new LibListAdapter(this,stringList,MainActivity.cbMap));
     }
 
 

@@ -14,6 +14,7 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Scanner;
 
@@ -21,6 +22,7 @@ import java.util.Scanner;
 public class MainActivity extends ActionBarActivity {
 
     public final int REQ_CODE_SPEECH_INPUT = 0;
+    public static HashMap<String,String> cbMap = new HashMap<String, String>();
 
     EditText etSearch;  //Search string
 
@@ -28,6 +30,11 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //initializing
+        cbMap.put(Constants.files[0],"1");
+        cbMap.put(Constants.files[1],"1");
+        cbMap.put(Constants.files[2],"1");
 
         File dir = new File(Constants.LIB_PATH);
         dir.mkdirs();
@@ -103,7 +110,7 @@ public class MainActivity extends ActionBarActivity {
             return totSearchList;
         if (listFiles.length > 0) {
             for (int i = 0; i < listFiles.length; i++) {
-                if (listFiles[i].isFile()) {
+                if (listFiles[i].isFile()&& MainActivity.cbMap.get(listFiles[i].getName().substring(0,listFiles[i].getName().indexOf("."))).equals("1")) {
                     totSearchList.addAll(findWord(s,listFiles[i]));
                 }
             }

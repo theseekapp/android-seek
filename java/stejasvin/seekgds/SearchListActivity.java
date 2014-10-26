@@ -271,7 +271,7 @@ public class SearchListActivity extends ActionBarActivity {
             return totSearchList;
         if (listFiles.length > 0) {
             for (int i = 0; i < listFiles.length; i++) {
-                if (listFiles[i].isFile()) {
+                if (listFiles[i].isFile() && MainActivity.cbMap.get(listFiles[i].getName().substring(0,listFiles[i].getName().indexOf("."))).equals("1")) {
                     totSearchList.addAll(findWord(s,listFiles[i]));
                 }
             }
