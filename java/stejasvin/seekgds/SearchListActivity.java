@@ -88,7 +88,7 @@ public class SearchListActivity extends ActionBarActivity {
                                     TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.
                                             toMinutes((long) startTime)))
             );
-            seekbar.setProgress((int)startTime);
+            seekbar.setProgress((int)(startTime/finalTime));
             myHandler.postDelayed(UpdateSongTime,100);
             bPlay.setEnabled(true);
             bPause.setEnabled(false);
@@ -151,7 +151,7 @@ public class SearchListActivity extends ActionBarActivity {
         //TODO Make this list hold checkbox also, maybe use sharedprefs
 
         ListView list = (ListView)findViewById(R.id.list_search);
-        list.setAdapter(new SearchListAdapter(this,searchArray,mediaPlayer,seekbar,myHandler,UpdateSongTime));
+        list.setAdapter(new SearchListAdapter(this,searchArray,mediaPlayer,seekbar,myHandler,UpdateSongTime,bPause,bPlay));
     }
 
     public void playAudio(String filePath){

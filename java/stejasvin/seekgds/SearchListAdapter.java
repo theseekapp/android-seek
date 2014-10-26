@@ -42,9 +42,10 @@ public class SearchListAdapter extends ArrayAdapter {
     SeekBar seekBar;
     Handler handler;
     Runnable runnable;
+    Button bPause,bPlay;
 
     public SearchListAdapter(Context context, ArrayList<SearchResult> searchList, MediaPlayer mediaPlayer,
-                             SeekBar seekbar,Handler seekHandler,Runnable runnable) {
+                             SeekBar seekbar,Handler seekHandler,Runnable runnable,Button bPause, Button bPlay) {
         super(context, R.layout.single_list_item_string_search, searchList);
         this.context = context;
         this.searchList = searchList;
@@ -52,6 +53,8 @@ public class SearchListAdapter extends ArrayAdapter {
         this.seekBar = seekbar;
         this.handler = seekHandler;
         this.runnable = runnable;
+        this.bPlay = bPlay;
+        this.bPause = bPause;
 
     }
 
@@ -66,13 +69,13 @@ public class SearchListAdapter extends ArrayAdapter {
         final SearchResult searchResult = searchList.get(position);
 
         TextView tvName = (TextView) row.findViewById(R.id.tv_filename_search_sli);
-        tvName.setText(searchResult.getFileName().replace(".txt",".mp3") + " : " + searchResult.getSeekString());
+        tvName.setText(searchResult.getFileName().replace(".txt", ".mp3") + " : " + searchResult.getSeekString());
 
         TextView tvSubs = (TextView) row.findViewById(R.id.tv_search_sli);
         tvSubs.setText(searchResult.getSubtitle());
 
-        Button bPlay = (Button) row.findViewById(R.id.b_play_sli);
-        bPlay.setOnClickListener(new View.OnClickListener() {
+        final Button bSniPlay = (Button) row.findViewById(R.id.b_play_sli);
+        bSniPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String path = Environment.getExternalStorageDirectory() + "/SeekLib/" + searchResult.getFileName().replace(".txt", ".mp3");
@@ -89,6 +92,8 @@ public class SearchListAdapter extends ArrayAdapter {
                             mediaPlayer.seekTo(searchResult.seekTime);
                             seekBar.setProgress((int) mediaPlayer.getCurrentPosition());
                             handler.postDelayed(runnable,100);
+                            bPlay.setEnabled(false);
+                            bPause.setEnabled(true);
                         }
                     });
                     mp.prepareAsync();
