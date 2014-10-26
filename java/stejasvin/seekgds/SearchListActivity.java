@@ -46,7 +46,7 @@ public class SearchListActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_list);
-        String filePath = Environment.getExternalStorageDirectory()+"/SeekLib/Oh Penne.mp3";
+        String filePath = Environment.getExternalStorageDirectory()+"/SeekLib/Pinocchio.mp3";
         mediaPlayer = MediaPlayer.create(this,Uri.fromFile(new File(filePath)));
         startTimeField =(TextView)findViewById(R.id.tv_start_search);
         endTimeField =(TextView)findViewById(R.id.tv_end_search);
@@ -90,8 +90,8 @@ public class SearchListActivity extends ActionBarActivity {
             );
             seekbar.setProgress((int)startTime);
             myHandler.postDelayed(UpdateSongTime,100);
-            bPause.setEnabled(true);
-            bPlay.setEnabled(false);
+            bPlay.setEnabled(true);
+            bPause.setEnabled(false);
             //mediaPlayer.seekTo(searchResult.seekTime);
         } catch (IOException e) {
             Toast.makeText(SearchListActivity.this, "Error in playing.. " + e.getMessage(), Toast.LENGTH_SHORT).show();

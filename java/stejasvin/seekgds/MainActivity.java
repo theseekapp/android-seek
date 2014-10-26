@@ -190,8 +190,11 @@ public class MainActivity extends ActionBarActivity {
                     SearchResult searchResult = new SearchResult();
                     searchResult.setFileName(file.getName());
                     searchResult.setFilePath(file.getPath());
-                    searchResult.setSeekString(lastSeek);
-                    searchResult.setSeekTime(Integer.decode(lastSeek));
+                    int milliTime = Integer.decode(lastSeek);
+                    int min = milliTime/60000;
+                    int sec = milliTime/1000;
+                    searchResult.setSeekTime(milliTime);
+                    searchResult.setSeekString(min+":"+sec);
                     searchResult.setSubtitle(temp.split(">")[1]);
                     searchList.add(searchResult);
                 }
