@@ -174,6 +174,10 @@ public class SearchListActivity extends ActionBarActivity {
             @Override
             public void onClick(View view) {
                     playAudio(Constants.LIB_PATH + "/Oh Penne.mp3");
+                bPlay.setVisibility(View.GONE);
+                bPause.setVisibility(View.VISIBLE);
+                bPause.setEnabled(true);
+                bPlay.setEnabled(false);
                 }
             //}
         });
@@ -185,6 +189,9 @@ public class SearchListActivity extends ActionBarActivity {
                     mediaPlayer.pause();
                     bPause.setEnabled(false);
                     bPlay.setEnabled(true);
+                    bPlay.setVisibility(View.VISIBLE);
+                    bPause.setVisibility(View.GONE);
+
                 }
             }
         });

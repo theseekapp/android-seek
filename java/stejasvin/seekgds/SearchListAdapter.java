@@ -96,6 +96,8 @@ public class SearchListAdapter extends ArrayAdapter {
                             handler.postDelayed(runnable,100);
                             bPlay.setEnabled(false);
                             bPause.setEnabled(true);
+                            bPlay.setVisibility(View.GONE);
+                            bPause.setVisibility(View.VISIBLE);
                         }
                     });
                     mp.prepareAsync();
