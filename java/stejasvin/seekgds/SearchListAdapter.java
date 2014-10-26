@@ -66,7 +66,7 @@ public class SearchListAdapter extends ArrayAdapter {
         final SearchResult searchResult = searchList.get(position);
 
         TextView tvName = (TextView) row.findViewById(R.id.tv_filename_search_sli);
-        tvName.setText(searchResult.getFileName() + " : " + searchResult.getSeekString());
+        tvName.setText(searchResult.getFileName().replace(".txt",".mp3") + " : " + searchResult.getSeekString());
 
         TextView tvSubs = (TextView) row.findViewById(R.id.tv_search_sli);
         tvSubs.setText(searchResult.getSubtitle());
