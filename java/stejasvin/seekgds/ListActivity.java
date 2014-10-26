@@ -17,9 +17,9 @@ public class ListActivity extends ActionBarActivity {
         setContentView(R.layout.activity_lib);
 
         List<String> stringList = new ArrayList<String>();
-        stringList.add("Audio1");
-        stringList.add("Audio2");
-        stringList.add("Audio3");
+        stringList.add("Pinocchio.mp3");
+        stringList.add("WarAndPeace.mp3");
+        stringList.add("OliverTwist.mp3");
         //TODO Make this list hold checkbox also, maybe use sharedprefs
 
         ListView list = (ListView)findViewById(R.id.list_list);
