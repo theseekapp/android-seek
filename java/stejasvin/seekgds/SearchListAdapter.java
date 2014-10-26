@@ -7,11 +7,13 @@ import android.content.Context;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import java.io.File;
@@ -37,12 +39,19 @@ public class SearchListAdapter extends ArrayAdapter {
      */
     private Context context;
     MediaPlayer mp;
+    SeekBar seekBar;
+    Handler handler;
+    Runnable runnable;
 
-    public SearchListAdapter(Context context, ArrayList<SearchResult> searchList, MediaPlayer mediaPlayer) {
+    public SearchListAdapter(Context context, ArrayList<SearchResult> searchList, MediaPlayer mediaPlayer,
+                             SeekBar seekbar,Handler seekHandler,Runnable runnable) {
         super(context, R.layout.single_list_item_string_search, searchList);
         this.context = context;
         this.searchList = searchList;
         this.mp = mediaPlayer;
+        this.seekBar = seekbar;
+        this.handler = seekHandler;
+        this.runnable = runnable;
 
     }
 
@@ -70,12 +79,16 @@ public class SearchListAdapter extends ArrayAdapter {
                 File file = new File(path);
                 Uri uri = Uri.fromFile(file);
                 try {
+
                     mp.reset();
                     mp.setDataSource(context, uri);
                     mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                         @Override
                         public void onPrepared(MediaPlayer mediaPlayer) {
                             mediaPlayer.start();
+                            mediaPlayer.seekTo(searchResult.seekTime);
+                            seekBar.setProgress((int) mediaPlayer.getCurrentPosition());
+                            handler.postDelayed(runnable,100);
                         }
                     });
                     mp.prepareAsync();
@@ -94,37 +107,4 @@ public class SearchListAdapter extends ArrayAdapter {
         return row;
     }
 
-    /*@Override
-    public int getCount() {
-        return stringList.size()+1;
-
-
-        if (mp.isPlaying())
-                    mp.pause();
-                else {
-                    boolean flag = false;
-                    try {
-                        //mp.release();
-                        mp.reset();
-                        mp.setDataSource(Constants.LIB_PATH + "/Oh Penne.mp3");
-                        //mp = MediaPlayer.create(context, Uri.fromFile(new File(Environment.getExternalStorageDirectory() + "/SeekLib/"+ searchResult.getFileName().replace(".txt", ".mp3"))));
-                        //mp.setDataSource(Constants.LIB_PATH + "/" + searchResult.getFileName().replace(".txt", ".mp3"));
-                    } catch (Exception e1) {
-//                        try {
-//                            mp.reset();
-//                            mp.setDataSource(Constants.LIB_PATH + "/" + searchResult.getFileName().replace(".txt", ".mp3"));
-//                        } catch (Exception e2) {
-//                            Toast.makeText(context, "Error in playing.. " + searchResult.getSubtitle(), Toast.LENGTH_SHORT).show();
-                            e1.printStackTrace();
-                            flag = true;
-//                        }
-                    }
-                    if (!flag) {
-                        mp.start();
-                        mp.seekTo(searchResult.seekTime);
-                    }
-
-
-
-    }*/
 }
