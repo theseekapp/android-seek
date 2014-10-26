@@ -9,6 +9,41 @@
     tools:context=".MainActivity"
     android:orientation="vertical">
 
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="s"
+            android:layout_weight="1"
+            android:id="@+id/b_stop_search" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="pl"
+            android:layout_weight="1"
+            android:id="@+id/b_play_search" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="pa"
+            android:layout_weight="1"
+            android:id="@+id/b_pause_search" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="correct"
+            android:layout_weight="1"
+            android:id="@+id/b_correct_search" />
+    </LinearLayout>
+
     <ListView
         android:id="@+id/list_search"
         android:layout_width="match_parent"

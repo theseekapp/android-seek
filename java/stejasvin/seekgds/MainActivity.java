@@ -101,7 +101,7 @@ public class MainActivity extends ActionBarActivity {
             }
         };
         //Filtering only text files
-        File[] listFiles = libDir.listFiles();
+        File[] listFiles = libDir.listFiles(filenameFilter);
         if(listFiles == null)
             return totSearchList;
         if (listFiles.length > 0) {
