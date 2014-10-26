@@ -53,9 +53,10 @@ public class SearchListActivity extends ActionBarActivity {
         seekbar = (SeekBar)findViewById(R.id.sb_search);
         bPlay = (Button)findViewById(R.id.b_play_search);
         bPause = (Button)findViewById(R.id.b_pause_search);
-
         seekbar.setClickable(false);
         bPause.setEnabled(false);
+
+
 
         ArrayList<SearchResult> searchArray = getIntent().getParcelableArrayListExtra("searchList");
         if(searchArray == null || searchArray.size()==0) {
