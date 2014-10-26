@@ -41,6 +41,7 @@ public class SearchListActivity extends ActionBarActivity {
     EditText etSearch;
     ArrayList<SearchResult> searchArray;
     SearchListAdapter searchListAdapter;
+    TextView fileName;
 
     @Override
     protected void onDestroy() {
@@ -62,6 +63,7 @@ public class SearchListActivity extends ActionBarActivity {
         setContentView(R.layout.activity_search_list_new);
         String filePath = Environment.getExternalStorageDirectory()+"/SeekLib/Pinocchio.mp3";
         mediaPlayer = MediaPlayer.create(this,Uri.fromFile(new File(filePath)));
+        fileName = (TextView)findViewById(R.id.tv_filename_search);
         startTimeField =(TextView)findViewById(R.id.tv_start_search);
         endTimeField =(TextView)findViewById(R.id.tv_end_search);
         seekbar = (SeekBar)findViewById(R.id.sb_search);
@@ -158,8 +160,10 @@ public class SearchListActivity extends ActionBarActivity {
             );
             seekbar.setProgress((int)(startTime/finalTime));
             myHandler.postDelayed(UpdateSongTime,100);
-            bPlay.setEnabled(true);
+            bPlay.setEnabled(false);
             bPause.setEnabled(false);
+            bPause.setVisibility(View.GONE);
+            bPlay.setVisibility(View.VISIBLE);
             //mediaPlayer.seekTo(searchResult.seekTime);
         } catch (IOException e) {
             Toast.makeText(SearchListActivity.this, "Error in playing.. " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -190,7 +194,7 @@ public class SearchListActivity extends ActionBarActivity {
         //TODO Make this list hold checkbox also, maybe use sharedprefs
 
         ListView list = (ListView)findViewById(R.id.list_search);
-        searchListAdapter =new SearchListAdapter(this,searchArray,mediaPlayer,seekbar,myHandler,UpdateSongTime,bPause,bPlay);
+        searchListAdapter =new SearchListAdapter(this,searchArray,mediaPlayer,seekbar,myHandler,UpdateSongTime,bPause,bPlay,fileName);
         list.setAdapter(searchListAdapter);
     }
 

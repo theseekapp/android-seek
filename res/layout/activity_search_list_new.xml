@@ -81,15 +81,19 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:orientation="horizontal">
+        android:gravity="center"
+        android:orientation="horizontal"
+        >
+
 
         <Button
-            android:id="@+id/b_stop_search"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
+            android:id="@+id/b_pause_search"
+            android:layout_width="79dp"
+            android:layout_height="79dp"
             android:layout_margin="5sp"
-            android:background="@drawable/stop_sel" />
+            android:background="@drawable/pause_sel"
+            android:visibility="gone" />
+
 
         <Button
             android:id="@+id/b_play_search"
@@ -98,20 +102,21 @@
             android:layout_margin="5sp"
             android:background="@drawable/play_sel" />
 
-        <Button
-            android:id="@+id/b_pause_search"
-            android:layout_width="79dp"
-            android:layout_height="79dp"
-            android:layout_margin="5sp"
-            android:background="@drawable/pause_sel" />
-
-        <Button
-            android:id="@+id/b_correct_search"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:layout_margin="5sp"
-            android:background="@drawable/correct_sel" />
+            />
     </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="FileName"
+        android:layout_gravity="center"
+        android:textSize="20sp"
+        android:id="@+id/tv_filename_search"></TextView>
+
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:background="#8d0c1e"/>
 
 
     <ListView

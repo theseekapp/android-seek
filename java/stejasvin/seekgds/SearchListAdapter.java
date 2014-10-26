@@ -43,9 +43,10 @@ public class SearchListAdapter extends ArrayAdapter {
     Handler handler;
     Runnable runnable;
     Button bPause,bPlay;
+    TextView fileName;
 
     public SearchListAdapter(Context context, ArrayList<SearchResult> searchList, MediaPlayer mediaPlayer,
-                             SeekBar seekbar,Handler seekHandler,Runnable runnable,Button bPause, Button bPlay) {
+                             SeekBar seekbar,Handler seekHandler,Runnable runnable,Button bPause, Button bPlay,TextView fileName) {
         super(context, R.layout.single_list_item_string_search, searchList);
         this.context = context;
         this.searchList = searchList;
@@ -55,6 +56,7 @@ public class SearchListAdapter extends ArrayAdapter {
         this.runnable = runnable;
         this.bPlay = bPlay;
         this.bPause = bPause;
+        this.fileName = fileName;
 
     }
 
@@ -97,7 +99,7 @@ public class SearchListAdapter extends ArrayAdapter {
                         }
                     });
                     mp.prepareAsync();
-
+                    fileName.setText(searchResult.getFileName().replace(".txt", ".mp3"));
                     //mp.start();
                     //mp.seekTo(searchResult.seekTime);
                 } catch (IOException e) {
