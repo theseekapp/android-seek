@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -48,6 +46,7 @@ public class MainActivity extends ActionBarActivity {
                         String[] tempList = new String[100];
                         Intent intent = new Intent(MainActivity.this,SearchListActivity.class);
                         //totList.toArray(tempList);
+                        intent.putExtra("searchString",etSearch.getText().toString());
                         intent.putParcelableArrayListExtra("searchList",totList);
                         startActivity(intent);
                     }else{
@@ -153,25 +152,6 @@ public class MainActivity extends ActionBarActivity {
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
     public ArrayList<SearchResult> findWord(String word, File file){
         ArrayList<SearchResult> searchList=new ArrayList<SearchResult>();
         try{
@@ -202,42 +182,7 @@ public class MainActivity extends ActionBarActivity {
             }
             read.close();
 
-            /*BufferedReader input = new BufferedReader(
-                    new InputStreamReader(
-                            new FileInputStream(file)));
-            RandomAccessFile raf = new RandomAccessFile(file, "rw");
-            String line,lastSeek;
 
-            ArrayList<Integer> list=new ArrayList<Integer>();
-            int ptrCurr,ptrTemp,ptrTot=0;
-
-            while((line=input.readLine())!=null){
-                if(line.indexOf("<")>-1 && line.indexOf(">")>-1)
-                    lastSeek = line.substring(line.indexOf("<"),line.indexOf(">"));
-
-                if(line.indexOf(word)>-1){
-                    list.add(line.indexOf(word));
-
-                    //backtrack to find
-                    //ptrCurr=ptrTemp=ptrTot+line.indexOf(word);
-                    //while(raf.read)
-                    String finalString= "hello";
-                    //if(line.indexOf("<")>-1) ;
-
-
-
-                    SearchResult searchResult = new SearchResult();
-                    searchResult.setFileName(file.getName());
-                    searchResult.setFilePath(file.getPath());
-                    searchResult.setSeekString("1:15");
-                    searchResult.setSeekTime(12000);
-                    searchResult.setSubtitle(finalString);
-                    searchList.add(searchResult);
-                }
-                ptrTot+=line.length();
-            }
-
-            input.close();*/
         }
         catch(Exception ex){
             ex.printStackTrace();
@@ -245,56 +190,5 @@ public class MainActivity extends ActionBarActivity {
         return searchList;
     }
 
-/*    public ArrayList<SearchResult> findWordNew(String word, File file){
-        ArrayList<SearchResult> searchList=new ArrayList<SearchResult>();
-        try{
-//            Scanner read = new Scanner(file);
-//            read.useDelimiter("<");
-//            String temp;
-//            while(read.hasNext())
-//            {
-//                temp=read.next();
-//                Log.i("SeekJava",temp);
-//
-//            }
-//            read.close();
 
-            String line,lastSeek;
-
-            ArrayList<Integer> list=new ArrayList<Integer>();
-            int ptrCurr,ptrTemp,ptrTot=0;
-
-            while((line=input.readLine())!=null){
-                if(line.indexOf("<")>-1 && line.indexOf(">")>-1)
-                    lastSeek = line.substring(line.indexOf("<"),line.indexOf(">"));
-
-                if(line.indexOf(word)>-1){
-                    list.add(line.indexOf(word));
-
-                    //backtrack to find
-                    //ptrCurr=ptrTemp=ptrTot+line.indexOf(word);
-                    //while(raf.read)
-                    String finalString;
-                    if(line.indexOf("<")>-1) ;
-
-
-
-                    SearchResult searchResult = new SearchResult();
-                    searchResult.setFileName(file.getName());
-                    searchResult.setFilePath(file.getPath());
-                    searchResult.setSeekString("1:15");
-                    searchResult.setSeekTime(12000);
-                    searchResult.setSubtitle(finalString);
-                    searchList.add(searchResult);
-                }
-                ptrTot+=line.length();
-            }
-
-            input.close();
-        }
-        catch(Exception ex){
-            ex.printStackTrace();
-        }
-        return searchList;
-    }*/
 }
