@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
@@ -54,6 +55,24 @@ public class SearchListActivity extends ActionBarActivity {
     private BroadcastReceiver uploadReceiver;
     private LinearLayout llOnline;
 
+    public static class manageMedia{
+        public static Button bMainPlay;
+        public static int currPlay;
+        public static List<Button> bPlayList;
+        public static boolean flagFirst;
+
+        public static void init(Button main,List<Button> list){
+            bMainPlay = main;
+            bPlayList = list;
+            flagFirst=true;
+            currPlay=0;
+        }
+
+        public static void play(){
+
+        }
+
+    }
 
     @Override
     protected void onDestroy() {
@@ -69,18 +88,24 @@ public class SearchListActivity extends ActionBarActivity {
                 boolean success = intent.getBooleanExtra("success",false);
                 if(success) {
                     onlineSearchArray = intent.getParcelableArrayListExtra("onlineSearchList");
-                    onlineListView = (ListView)findViewById(R.id.online_list_search);
-                    searchOnlineListAdapter = new SearchListAdapter(SearchListActivity.this,onlineSearchArray,mediaPlayer,seekbar,myHandler,UpdateSongTime,bPause,bPlay,fileName);
-                    onlineListView.setAdapter(searchOnlineListAdapter);
+                    //onlineListView = (ListView)findViewById(R.id.online_list_search);
+                    //searchOnlineListAdapter = new SearchListAdapter(SearchListActivity.this,onlineSearchArray,mediaPlayer,seekbar,myHandler,UpdateSongTime,bPause,bPlay,fileName);
+                    //onlineListView.setAdapter(searchOnlineListAdapter);
 
-                    if(onlineSearchArray.size()==0) {
-                        onlineListView.setVisibility(View.GONE);
-                        llOnline.setVisibility(View.VISIBLE);
-                    }
-                    else {
-                        onlineListView.setVisibility(View.VISIBLE);
-                        llOnline.setVisibility(View.GONE);
-                    }
+                    //testing
+                    //SearchResult searchResult = new SearchResult();
+                    //searchResult.setFileName("DUmmy");
+                    searchArray.addAll(onlineSearchArray);
+                    searchListAdapter.notifyDataSetChanged();
+
+//                    if(onlineSearchArray.size()==0) {
+//                        onlineListView.setVisibility(View.GONE);
+//                        llOnline.setVisibility(View.VISIBLE);
+//                    }
+//                    else {
+//                        onlineListView.setVisibility(View.VISIBLE);
+//                        llOnline.setVisibility(View.GONE);
+//                    }
 
                 }else {
                     Toast.makeText(SearchListActivity.this,"Offline",Toast.LENGTH_LONG).show();
@@ -114,8 +139,8 @@ public class SearchListActivity extends ActionBarActivity {
 
         seekbar.setClickable(false);
         bPause.setEnabled(false);
-        onlineListView.setVisibility(View.GONE);
-        llOnline.setVisibility(View.VISIBLE);
+        //onlineListView.setVisibility(View.GONE);
+        //llOnline.setVisibility(View.VISIBLE);
 
         etSearch = (EditText)findViewById(R.id.et_main);
 
@@ -138,7 +163,7 @@ public class SearchListActivity extends ActionBarActivity {
                 imm.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
             } else {
                 Toast.makeText(SearchListActivity.this, "Results Not Found", Toast.LENGTH_SHORT).show();
-                searchListAdapter.clear();
+                //searchListAdapter.clear();
             }
 
         }
@@ -169,8 +194,8 @@ public class SearchListActivity extends ActionBarActivity {
                     serviceIntent.putExtra("searchString",etSearch.getText().toString());
                     startService(serviceIntent);
 
-                    onlineListView.setVisibility(View.GONE);
-                    llOnline.setVisibility(View.VISIBLE);
+                    //onlineListView.setVisibility(View.GONE);
+                    //llOnline.setVisibility(View.VISIBLE);
 
                     ArrayList<SearchResult> totList = Utilities.searchThruFiles(etSearch.getText().toString());
 
@@ -186,7 +211,7 @@ public class SearchListActivity extends ActionBarActivity {
 
                     }else{
                         Toast.makeText(SearchListActivity.this, "Results Not Found", Toast.LENGTH_SHORT).show();
-                        searchListAdapter.clear();
+                        //searchListAdapter.clear();
                     }
                 }
                 else
@@ -299,8 +324,8 @@ public class SearchListActivity extends ActionBarActivity {
         searchListAdapter =new SearchListAdapter(this,searchArray,mediaPlayer,seekbar,myHandler,UpdateSongTime,bPause,bPlay,fileName);
         list.setAdapter(searchListAdapter);
 
-        onlineListView.setVisibility(View.GONE);
-        llOnline.setVisibility(View.VISIBLE);
+        //onlineListView.setVisibility(View.GONE);
+        //llOnline.setVisibility(View.VISIBLE);
 
 
     }

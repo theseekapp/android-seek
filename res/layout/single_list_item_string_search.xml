@@ -21,12 +21,22 @@
 
         <TextView
             android:id="@+id/tv_search_sli"
-            android:layout_width="fill_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginLeft="10sp"
             android:gravity="center_vertical"
-            android:text="line"
+            android:text="linefaslf;ka sl ljlk;lskf cjoijaoisdfcojaweoif;kwlej;f lkawef/;iojwe ;ofawelkfjaeo"
+            android:layout_weight="1"
             android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/tv_status_sli"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_margin="10sp"
+            android:gravity="center_vertical|right"
+            android:text="local"
+            android:textSize="10sp" />
     </LinearLayout>
 
     <TextView

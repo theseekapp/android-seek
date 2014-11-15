@@ -75,8 +75,11 @@ public class SearchListAdapter extends ArrayAdapter {
         TextView tvName = (TextView) row.findViewById(R.id.tv_filename_search_sli);
         tvName.setText(searchResult.getFileName().replace(".txt", ".mp3") + " : " + searchResult.getSeekString());
 
-        TextView tvSubs = (TextView) row.findViewById(R.id.tv_search_sli);
+        final TextView tvSubs = (TextView) row.findViewById(R.id.tv_search_sli);
         tvSubs.setText(searchResult.getSubtitle());
+
+        final TextView tvStatus = (TextView) row.findViewById(R.id.tv_status_sli);
+
 
         final Button bSniPlay = (Button) row.findViewById(R.id.b_play_sli);
         bSniPlay.setOnClickListener(new View.OnClickListener() {
@@ -84,6 +87,7 @@ public class SearchListAdapter extends ArrayAdapter {
             public void onClick(View view) {
                 //online youtube link
                 if(searchResult.filePath.contains("https://")) {
+                    tvStatus.setText("online");
                     int mintot=0,hrs=0,hrs0=0,hrs1=0,min0=0,min1=0,sec0=0,sec1=0,milliTime = 0,sec=0,min=0;
                     String seekTime = searchResult.getSeekString();
                     String times[] = seekTime.split(":");
@@ -118,6 +122,7 @@ public class SearchListAdapter extends ArrayAdapter {
                 }
                 //local repo link
                 else {
+                    tvStatus.setText("local");
                     String path = Constants.ROOT_LOCAL_PATH + searchResult.getFileName().replace(".txt", ".mp3");
                     File file = new File(path);
                     Uri uri = Uri.fromFile(file);

@@ -29,6 +29,10 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //Creating lib
+        File file = new File(Constants.ROOT_LOCAL_PATH);
+        file.mkdirs();
+
         //initializing
 
 //        cbMap.put(Constants.files[0],"1");
