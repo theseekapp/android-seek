@@ -298,7 +298,7 @@ public class SearchListActivity extends ActionBarActivity {
                                     TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.
                                             toMinutes((long) startTime)))
             );
-            seekbar.setProgress((int)(startTime/finalTime));
+            //seekbar.setProgress((int)(startTime/finalTime*100));
             myHandler.postDelayed(UpdateSongTime,100);
             bPlay.setEnabled(false);
             bPause.setEnabled(false);
@@ -337,10 +337,10 @@ public class SearchListActivity extends ActionBarActivity {
             mediaPlayer.start();
             finalTime = mediaPlayer.getDuration();
             startTime = mediaPlayer.getCurrentPosition();
-            if(oneTimeOnly == 0){
-                seekbar.setMax((int) finalTime);
-                oneTimeOnly = 1;
-            }
+            //if(oneTimeOnly == 0){
+            seekbar.setMax((int) finalTime);
+            //    oneTimeOnly = 1;
+            //}
 
             endTimeField.setText(String.format("%d min, %d sec",
                             TimeUnit.MILLISECONDS.toMinutes((long) finalTime),
@@ -354,7 +354,7 @@ public class SearchListActivity extends ActionBarActivity {
                                     TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.
                                             toMinutes((long) startTime)))
             );
-            seekbar.setProgress((int)(startTime/finalTime));
+            //seekbar.setProgress((int)(startTime/finalTime));
             myHandler.postDelayed(UpdateSongTime,100);
             bPause.setEnabled(true);
             bPlay.setEnabled(false);
@@ -374,7 +374,8 @@ public class SearchListActivity extends ActionBarActivity {
                                     TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.
                                             toMinutes((long) startTime)))
             );
-            seekbar.setProgress((int)(startTime/finalTime));
+            //int progressTime = (int)(startTime/finalTime*100);
+            seekbar.setProgress(mediaPlayer.getCurrentPosition());
             myHandler.postDelayed(this, 100);
         }
     };
