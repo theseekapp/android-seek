@@ -3,74 +3,60 @@ package stejasvin.seekgds;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.speech.RecognizerIntent;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
+public class LibListActivity extends ActionBarActivity {
 
-public class MainActivity extends ActionBarActivity {
 
-    public final int REQ_CODE_SPEECH_INPUT = 0;
-    public static HashMap<String,String> cbMap = new HashMap<String, String>();
-
-    EditText etSearch;  //Search string
+    private static final int REQ_CODE_SPEECH_INPUT = 1;
+    EditText etSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_lib);
 
-        //initializing
+        etSearch = (EditText)findViewById(R.id.et_lib);
 
-//        cbMap.put(Constants.files[0],"1");
-//        cbMap.put(Constants.files[1],"1");
-//        cbMap.put(Constants.files[2],"1");
-        initCbMap();
+        String searchTemp = getIntent().getStringExtra("searchString");
+        if(searchTemp!=null)
+            etSearch.setText(searchTemp);
 
-        File dir = new File(Constants.LIB_PATH);
-        dir.mkdirs();
-
-        etSearch = (EditText)findViewById(R.id.et_main);
         Button bGen = (Button)findViewById(R.id.b_gen_main);
         bGen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 if(!etSearch.getText().toString().equals("")) {
-                    Intent intent = new Intent(MainActivity.this,SearchListActivity.class);
+                    Intent intent = new Intent(LibListActivity.this,SearchListActivity.class);
                     intent.putExtra("searchString",etSearch.getText().toString());
                     startActivity(intent);
                 }
                 else
-                    Toast.makeText(MainActivity.this,"Enter valid stuff",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LibListActivity.this,"Enter valid stuff",Toast.LENGTH_SHORT).show();
             }
         });
 
-        Button bLib = (Button)findViewById(R.id.b_lib_main);
-        bLib.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this,LibListActivity.class);
-                intent.putExtra("searchString",etSearch.getText().toString());
-                startActivity(intent);
-            }
-        });
 
         Button bMic = (Button) findViewById(R.id.b_mic_main);
         bMic.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                Utilities.promptSpeechInput(MainActivity.this);
+                Utilities.promptSpeechInput(LibListActivity.this);
             }
         });
 
@@ -82,14 +68,23 @@ public class MainActivity extends ActionBarActivity {
                 etSearch.setText("");
             }
         });
+
+
+        List<String> stringFileList = new ArrayList<String>();
+
+        //If this pathname does not denote a directory, then listFiles() returns null.
+
+        stringFileList = Utilities.getAllMp3Files();
+        //stringList.add("Pinocchio.mp3");
+        //stringList.add("WarAndPeace.mp3");
+        //stringList.add("OliverTwist.mp3");
+
+        //TODO Make this list hold checkbox also, maybe use sharedprefs
+
+        ListView list = (ListView)findViewById(R.id.list_list);
+        list.setAdapter(new LibListAdapter(this,stringFileList,MainActivity.cbMap));
     }
 
-    void initCbMap(){
-        List<String> tempList = Utilities.getAllMp3Files();
-        for(int i=0;i<tempList.size();i++) {
-            cbMap.put(tempList.get(i).replace(".mp3",""),"1");
-        }
-    }
 
     /**
      * Receiving speech input

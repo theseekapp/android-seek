@@ -49,9 +49,9 @@ public class LibListAdapter extends ArrayAdapter {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             row = inflater.inflate(textViewResourceId, parent, false); // inflate view from xml file
         }
-
+        final String currFileName = stringList.get(position).replace(".mp3","");
         CheckBox checkbox = (CheckBox) row.findViewById(R.id.cb_lib_sli);
-        if(MainActivity.cbMap.get(Constants.files[position]).equals("1"))
+        if(MainActivity.cbMap.get(currFileName).equals("1"))
             checkbox.setChecked(true);
         else
             checkbox.setChecked(false);
@@ -60,13 +60,13 @@ public class LibListAdapter extends ArrayAdapter {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if(b)
-                    map.put(Constants.files[position],"1");
+                    map.put(currFileName,"1");
                 else
-                    map.put(Constants.files[position],"0");
+                    map.put(currFileName,"0");
             }
         });
         TextView tv = (TextView) row.findViewById(R.id.tv_lib_sli);
-        tv.setText(stringList.get(position));
+        tv.setText(currFileName);
 
         /*if(position==0) {
             tvCourse.setText("List of Strings");

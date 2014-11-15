@@ -4,6 +4,7 @@
 package stejasvin.seekgds;
 
 import android.content.Context;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Environment;
@@ -81,34 +82,71 @@ public class SearchListAdapter extends ArrayAdapter {
         bSniPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String path = Environment.getExternalStorageDirectory() + "/SeekLib/" + searchResult.getFileName().replace(".txt", ".mp3");
-                File file = new File(path);
-                Uri uri = Uri.fromFile(file);
-                try {
+                //online youtube link
+                if(searchResult.filePath.contains("https://")) {
+                    int mintot=0,hrs=0,hrs0=0,hrs1=0,min0=0,min1=0,sec0=0,sec1=0,milliTime = 0,sec=0,min=0;
+                    String seekTime = searchResult.getSeekString();
+                    String times[] = seekTime.split(":");
+                    boolean flag=false;
+                    try {
 
-                    mp.reset();
-                    mp.setDataSource(context, uri);
-                    mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                        @Override
-                        public void onPrepared(MediaPlayer mediaPlayer) {
-                            mediaPlayer.start();
-                            mediaPlayer.seekTo(searchResult.seekTime);
-                            seekBar.setProgress((int) mediaPlayer.getCurrentPosition());
-                            handler.postDelayed(runnable,100);
-                            bPlay.setEnabled(false);
-                            bPause.setEnabled(true);
-                            bPlay.setVisibility(View.GONE);
-                            bPause.setVisibility(View.VISIBLE);
-                        }
-                    });
-                    mp.prepareAsync();
-                    fileName.setText(searchResult.getFileName().replace(".txt", ".mp3"));
-                    //mp.start();
-                    //mp.seekTo(searchResult.seekTime);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }catch (IllegalStateException e){
-                    e.printStackTrace();
+                        hrs0 = Integer.decode(times[0].charAt(0)+"");
+                        hrs1 = Integer.decode(times[0].charAt(1)+"");
+                        min0 = Integer.decode(times[1].charAt(0)+"");
+                        min1 = Integer.decode(times[1].charAt(1)+"");
+                        sec0 = Integer.decode(times[2].charAt(0)+"");
+                        sec1 = Integer.decode(times[2].charAt(1)+"");
+                        hrs = 10*hrs0+hrs1;
+                        min = 10*min0+min1;
+                        mintot = hrs*60+min;
+                        sec = sec0*10+sec1;
+                        flag=true;
+                    }catch (NumberFormatException e) {
+                        e.printStackTrace();
+                    }
+                    milliTime = (sec0*10+sec1) + 60 * (60 * (10*hrs0+hrs1) + (10*min0+min1));
+                    final Intent intent;
+                    if(flag)
+                        if(hrs1!=0 || hrs0!=0)
+                            intent = new Intent(Intent.ACTION_VIEW, Uri.parse(searchResult.filePath+"#t="+mintot+"m"+times[2]+"s"));
+                        else
+                            intent = new Intent(Intent.ACTION_VIEW, Uri.parse(searchResult.filePath+"#t="+times[1]+"m"+times[2]+"s"));
+                    else
+                        intent = new Intent(Intent.ACTION_VIEW, Uri.parse(searchResult.filePath));
+
+                    context.startActivity(intent);
+                }
+                //local repo link
+                else {
+                    String path = Constants.ROOT_LOCAL_PATH + searchResult.getFileName().replace(".txt", ".mp3");
+                    File file = new File(path);
+                    Uri uri = Uri.fromFile(file);
+                    try {
+
+                        mp.reset();
+                        mp.setDataSource(context, uri);
+                        mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                            @Override
+                            public void onPrepared(MediaPlayer mediaPlayer) {
+                                mediaPlayer.start();
+                                mediaPlayer.seekTo(searchResult.seekTime);
+                                seekBar.setProgress((int) mediaPlayer.getCurrentPosition());
+                                handler.postDelayed(runnable, 100);
+                                bPlay.setEnabled(false);
+                                bPause.setEnabled(true);
+                                bPlay.setVisibility(View.GONE);
+                                bPause.setVisibility(View.VISIBLE);
+                            }
+                        });
+                        mp.prepareAsync();
+                        fileName.setText(searchResult.getFileName().replace(".txt", ".mp3"));
+                        //mp.start();
+                        //mp.seekTo(searchResult.seekTime);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (IllegalStateException e) {
+                        e.printStackTrace();
+                    }
                 }
 
             }

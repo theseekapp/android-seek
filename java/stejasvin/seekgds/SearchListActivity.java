@@ -44,8 +44,8 @@ public class SearchListActivity extends ActionBarActivity {
     private SeekBar seekbar;
     public static int oneTimeOnly = 0;
     private EditText etSearch;
-    private ArrayList<SearchResult> searchArray;
-    private ArrayList<SearchResult> onlineSearchArray;
+    private ArrayList<SearchResult> searchArray = new ArrayList<SearchResult>();
+    private ArrayList<SearchResult> onlineSearchArray = new ArrayList<SearchResult>();
     private SearchListAdapter searchListAdapter;
     private SearchListAdapter searchOnlineListAdapter;
     private ListView onlineListView;
@@ -97,8 +97,6 @@ public class SearchListActivity extends ActionBarActivity {
         unregisterReceiver(uploadReceiver);
     }
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -120,8 +118,30 @@ public class SearchListActivity extends ActionBarActivity {
         llOnline.setVisibility(View.VISIBLE);
 
         etSearch = (EditText)findViewById(R.id.et_main);
-        if(getIntent().getStringExtra("searchString")!=null)
+
+        if(getIntent().getStringExtra("searchString")!=null) {
+            Toast.makeText(SearchListActivity.this, "\"Seeking\"...", Toast.LENGTH_SHORT).show();
+
             etSearch.setText(getIntent().getStringExtra("searchString"));
+
+            //Online service started
+            Intent serviceIntent = new Intent(SearchListActivity.this,SeekDataDownloadService.class);
+            serviceIntent.putExtra("searchString",etSearch.getText().toString());
+            startService(serviceIntent);
+
+            ArrayList<SearchResult> totList = Utilities.searchThruFiles(etSearch.getText().toString());
+            if (totList != null && totList.size() > 0) {
+                //String[] tempList = new String[100];
+                searchArray = totList;
+                InputMethodManager imm = (InputMethodManager) getSystemService(
+                        Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
+            } else {
+                Toast.makeText(SearchListActivity.this, "Results Not Found", Toast.LENGTH_SHORT).show();
+                searchListAdapter.clear();
+            }
+
+        }
 
         setListViews();
 //        searchArray = getIntent().getParcelableArrayListExtra("searchList");
@@ -152,7 +172,7 @@ public class SearchListActivity extends ActionBarActivity {
                     onlineListView.setVisibility(View.GONE);
                     llOnline.setVisibility(View.VISIBLE);
 
-                    ArrayList<SearchResult> totList = searchThruFiles(etSearch.getText().toString());
+                    ArrayList<SearchResult> totList = Utilities.searchThruFiles(etSearch.getText().toString());
 
                     if(totList!=null && totList.size()>0){
                         searchArray.clear();
@@ -166,6 +186,7 @@ public class SearchListActivity extends ActionBarActivity {
 
                     }else{
                         Toast.makeText(SearchListActivity.this, "Results Not Found", Toast.LENGTH_SHORT).show();
+                        searchListAdapter.clear();
                     }
                 }
                 else
@@ -187,7 +208,7 @@ public class SearchListActivity extends ActionBarActivity {
 
             @Override
             public void onClick(View v) {
-                promptSpeechInput();
+                Utilities.promptSpeechInput(SearchListActivity.this);
             }
         });
 
@@ -263,16 +284,16 @@ public class SearchListActivity extends ActionBarActivity {
             Toast.makeText(SearchListActivity.this, "Error in playing.. " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
-
-
     }
 
     public void setListViews(){
-        searchArray = getIntent().getParcelableArrayListExtra("searchList");
-        if(searchArray == null || searchArray.size()==0) {
-            Toast.makeText(SearchListActivity.this, "No results found", Toast.LENGTH_SHORT).show();
-            return;
-        }
+//        //searchArray = getIntent().getParcelableArrayListExtra("searchList");
+//        if(searchArray == null || searchArray.size()==0) {
+//            Toast.makeText(SearchListActivity.this, "No results found", Toast.LENGTH_SHORT).show();
+//            searchListAdapter.clear();
+//            return;
+//        }
+
 
         ListView list = (ListView)findViewById(R.id.list_search);
         searchListAdapter =new SearchListAdapter(this,searchArray,mediaPlayer,seekbar,myHandler,UpdateSongTime,bPause,bPlay,fileName);
@@ -284,7 +305,7 @@ public class SearchListActivity extends ActionBarActivity {
 
     }
 
-    public void playAudio(String filePath){
+    public void playAudio(String filePath){//,MediaPlayer mediaPlayer,int finalTime,int startTime,int oneTimeOnly,SeekBar seekbar,){
         try {
             if(mediaPlayer.getDuration()==0)
                 mediaPlayer.setDataSource(filePath);
@@ -333,50 +354,6 @@ public class SearchListActivity extends ActionBarActivity {
         }
     };
 
-    private ArrayList<SearchResult> searchThruFiles(String s) {
-        ArrayList<SearchResult> totSearchList = new ArrayList<SearchResult>();
-        File libDir = new File(Constants.LIB_PATH);
-        FilenameFilter filenameFilter = new FilenameFilter() {
-            @Override
-            public boolean accept(File file, String s) {
-                if(s.endsWith(".txt"))
-                    return true;
-                return false;
-            }
-        };
-        //Filtering only text files
-        File[] listFiles = libDir.listFiles(filenameFilter);
-        if(listFiles == null)
-            return totSearchList;
-        if (listFiles.length > 0) {
-            for (int i = 0; i < listFiles.length; i++) {
-                if (listFiles[i].isFile() && MainActivity.cbMap.get(listFiles[i].getName().substring(0,listFiles[i].getName().indexOf("."))).equals("1")) {
-                    totSearchList.addAll(findWord(s,listFiles[i]));
-                }
-            }
-        }
-        return totSearchList;
-    }
-
-
-    /**
-     * Showing google speech input dialog
-     * */
-    private void promptSpeechInput() {
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
-                getString(R.string.speech_prompt));
-        try {
-            startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
-        } catch (ActivityNotFoundException a) {
-            Toast.makeText(getApplicationContext(),
-                    getString(R.string.speech_not_supported),
-                    Toast.LENGTH_SHORT).show();
-        }
-    }
 
     /**
      * Receiving speech input
@@ -400,44 +377,5 @@ public class SearchListActivity extends ActionBarActivity {
     }
 
 
-    public ArrayList<SearchResult> findWord(String word, File file){
-        ArrayList<SearchResult> searchList=new ArrayList<SearchResult>();
-        try{
-
-            Scanner read = new Scanner(file);
-            read.useDelimiter("<");
-            String line,temp,lastSeek;
-            while(read.hasNext())
-            {
-                line=read.next();
-                temp="<".concat(line);
-                Log.i("SeekJava", temp);
-                lastSeek = temp.substring(temp.indexOf("<"),temp.indexOf(">")).replace("<","").replace(">","");
-
-                if(line.contains(word)) {
-                    SearchResult searchResult = new SearchResult();
-                    searchResult.setFileName(file.getName());
-                    searchResult.setFilePath(file.getPath());
-
-                    int milliTime = Integer.decode(lastSeek);
-                    int min = milliTime/60000;
-                    int sec = milliTime/1000;
-
-                    searchResult.setSeekTime(milliTime);
-                    searchResult.setSeekString(min+":"+sec);
-                    searchResult.setSubtitle(temp.split(">")[1]);
-                    searchList.add(searchResult);
-                }
-
-            }
-            read.close();
-
-
-        }
-        catch(Exception ex){
-            ex.printStackTrace();
-        }
-        return searchList;
-    }
 
 }

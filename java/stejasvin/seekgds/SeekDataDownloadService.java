@@ -130,7 +130,7 @@ public class SeekDataDownloadService extends IntentService {
                         milliTime = (sec0*10+sec1) + 60 * (60 * (10*hrs0+hrs1) + (10*min0+min1));
                     }
                     searchResult1.setSeekTime(milliTime);
-                    searchResult1.setSeekString(min+":"+sec);
+                    searchResult1.setSeekString(seekTime);
                     searchResultArrayList.add(searchResult1);
                 }
             } catch (JSONException e) {
