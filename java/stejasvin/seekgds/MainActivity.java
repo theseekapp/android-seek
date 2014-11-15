@@ -59,6 +59,11 @@ public class MainActivity extends ActionBarActivity {
                         intent.putParcelableArrayListExtra("searchList",totList);
                         startActivity(intent);
 
+                        //Online service started
+                        Intent serviceIntent = new Intent(MainActivity.this,SeekDataDownloadService.class);
+                        serviceIntent.putExtra("searchString",etSearch.getText().toString());
+                        startService(serviceIntent);
+
                         InputMethodManager imm = (InputMethodManager)getSystemService(
                                 Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);

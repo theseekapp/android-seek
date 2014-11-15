@@ -62,11 +62,12 @@ public class SearchListAdapter extends ArrayAdapter {
 
     public View getView(final int position, View convertView, ViewGroup parent) {
 
-        View row = convertView;
-        if (row == null) {
+        //View row = convertView;
+        View row=null;
+        //if (row == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             row = inflater.inflate(textViewResourceId, parent, false); // inflate view from xml file
-        }
+        //}
 
         final SearchResult searchResult = searchList.get(position);
 

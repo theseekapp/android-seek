@@ -1,8 +1,10 @@
 package stejasvin.seekgds;
 
 import android.content.ActivityNotFoundException;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,6 +17,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -40,10 +43,17 @@ public class SearchListActivity extends ActionBarActivity {
     private Handler myHandler = new Handler();
     private SeekBar seekbar;
     public static int oneTimeOnly = 0;
-    EditText etSearch;
-    ArrayList<SearchResult> searchArray;
-    SearchListAdapter searchListAdapter;
-    TextView fileName;
+    private EditText etSearch;
+    private ArrayList<SearchResult> searchArray;
+    private ArrayList<SearchResult> onlineSearchArray;
+    private SearchListAdapter searchListAdapter;
+    private SearchListAdapter searchOnlineListAdapter;
+    private ListView onlineListView;
+    private ListView listView;
+    private TextView fileName;
+    private BroadcastReceiver uploadReceiver;
+    private LinearLayout llOnline;
+
 
     @Override
     protected void onDestroy() {
@@ -52,9 +62,39 @@ public class SearchListActivity extends ActionBarActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        uploadReceiver = new BroadcastReceiver() {
+            public void onReceive(Context context, Intent intent) {
+                boolean success = intent.getBooleanExtra("success",false);
+                if(success) {
+                    onlineSearchArray = intent.getParcelableArrayListExtra("onlineSearchList");
+                    onlineListView = (ListView)findViewById(R.id.online_list_search);
+                    searchOnlineListAdapter = new SearchListAdapter(SearchListActivity.this,onlineSearchArray,mediaPlayer,seekbar,myHandler,UpdateSongTime,bPause,bPlay,fileName);
+                    onlineListView.setAdapter(searchOnlineListAdapter);
+
+                    if(onlineSearchArray.size()==0) {
+                        onlineListView.setVisibility(View.GONE);
+                        llOnline.setVisibility(View.VISIBLE);
+                    }
+                    else {
+                        onlineListView.setVisibility(View.VISIBLE);
+                        llOnline.setVisibility(View.GONE);
+                    }
+
+                }else {
+                    Toast.makeText(SearchListActivity.this,"Offline",Toast.LENGTH_LONG).show();
+                }
+            }
+        };
+        registerReceiver(uploadReceiver, new IntentFilter(Utilities.DOWN_DATA));
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         myHandler.removeCallbacks(UpdateSongTime);
+        unregisterReceiver(uploadReceiver);
     }
 
 
@@ -71,28 +111,49 @@ public class SearchListActivity extends ActionBarActivity {
         seekbar = (SeekBar)findViewById(R.id.sb_search);
         bPlay = (Button)findViewById(R.id.b_play_search);
         bPause = (Button)findViewById(R.id.b_pause_search);
+        onlineListView = (ListView)findViewById(R.id.online_list_search);
+        llOnline =(LinearLayout)findViewById(R.id.ll_online_search);
+
         seekbar.setClickable(false);
         bPause.setEnabled(false);
+        onlineListView.setVisibility(View.GONE);
+        llOnline.setVisibility(View.VISIBLE);
 
         etSearch = (EditText)findViewById(R.id.et_main);
         if(getIntent().getStringExtra("searchString")!=null)
             etSearch.setText(getIntent().getStringExtra("searchString"));
+
+        setListViews();
+//        searchArray = getIntent().getParcelableArrayListExtra("searchList");
+//        if(searchArray == null || searchArray.size()==0) {
+//            Toast.makeText(SearchListActivity.this, "No results found", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+
+        //ArrayList<SearchResult> stringList = Arrays.asList(searchArray);
+        //ListView list = (ListView)findViewById(R.id.list_search);
+//        searchListAdapter =new SearchListAdapter(this,searchArray,mediaPlayer,seekbar,myHandler,UpdateSongTime,bPause,bPlay,fileName);
+//        list.setAdapter(searchListAdapter);
+//
         Button bGen = (Button)findViewById(R.id.b_gen_main);
-
-        searchArray = getIntent().getParcelableArrayListExtra("searchList");
-        if(searchArray == null || searchArray.size()==0) {
-            Toast.makeText(SearchListActivity.this, "No results found", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         bGen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 if(!etSearch.getText().toString().equals("")) {
+
                     Toast.makeText(SearchListActivity.this, "\"Seeking\"...", Toast.LENGTH_SHORT).show();
 
+                    //Online service started
+                    Intent serviceIntent = new Intent(SearchListActivity.this,SeekDataDownloadService.class);
+                    serviceIntent.putExtra("searchString",etSearch.getText().toString());
+                    startService(serviceIntent);
+
+                    onlineListView.setVisibility(View.GONE);
+                    llOnline.setVisibility(View.VISIBLE);
+
                     ArrayList<SearchResult> totList = searchThruFiles(etSearch.getText().toString());
+
                     if(totList!=null && totList.size()>0){
                         searchArray.clear();
                         searchArray.addAll(totList);
@@ -139,6 +200,33 @@ public class SearchListActivity extends ActionBarActivity {
             }
         });
 
+        bPlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                playAudio(Constants.LIB_PATH + "/Oh Penne.mp3");
+                bPlay.setVisibility(View.GONE);
+                bPause.setVisibility(View.VISIBLE);
+                bPause.setEnabled(true);
+                bPlay.setEnabled(false);
+            }
+            //}
+        });
+
+        bPause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mediaPlayer!=null && mediaPlayer.isPlaying()) {
+                    mediaPlayer.pause();
+                    bPause.setEnabled(false);
+                    bPlay.setEnabled(true);
+                    bPlay.setVisibility(View.VISIBLE);
+                    bPause.setVisibility(View.GONE);
+
+                }
+            }
+        });
+
+
         //First run
         try {
             if(mediaPlayer.getDuration()==0)
@@ -176,39 +264,24 @@ public class SearchListActivity extends ActionBarActivity {
             e.printStackTrace();
         }
 
-        bPlay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                    playAudio(Constants.LIB_PATH + "/Oh Penne.mp3");
-                bPlay.setVisibility(View.GONE);
-                bPause.setVisibility(View.VISIBLE);
-                bPause.setEnabled(true);
-                bPlay.setEnabled(false);
-                }
-            //}
-        });
 
-        bPause.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mediaPlayer!=null && mediaPlayer.isPlaying()) {
-                    mediaPlayer.pause();
-                    bPause.setEnabled(false);
-                    bPlay.setEnabled(true);
-                    bPlay.setVisibility(View.VISIBLE);
-                    bPause.setVisibility(View.GONE);
+    }
 
-                }
-            }
-        });
-
-
-        //ArrayList<SearchResult> stringList = Arrays.asList(searchArray);
-        //TODO Make this list hold checkbox also, maybe use sharedprefs
+    public void setListViews(){
+        searchArray = getIntent().getParcelableArrayListExtra("searchList");
+        if(searchArray == null || searchArray.size()==0) {
+            Toast.makeText(SearchListActivity.this, "No results found", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         ListView list = (ListView)findViewById(R.id.list_search);
         searchListAdapter =new SearchListAdapter(this,searchArray,mediaPlayer,seekbar,myHandler,UpdateSongTime,bPause,bPlay,fileName);
         list.setAdapter(searchListAdapter);
+
+        onlineListView.setVisibility(View.GONE);
+        llOnline.setVisibility(View.VISIBLE);
+
+
     }
 
     public void playAudio(String filePath){
@@ -345,9 +418,11 @@ public class SearchListActivity extends ActionBarActivity {
                     SearchResult searchResult = new SearchResult();
                     searchResult.setFileName(file.getName());
                     searchResult.setFilePath(file.getPath());
+
                     int milliTime = Integer.decode(lastSeek);
                     int min = milliTime/60000;
                     int sec = milliTime/1000;
+
                     searchResult.setSeekTime(milliTime);
                     searchResult.setSeekString(min+":"+sec);
                     searchResult.setSubtitle(temp.split(">")[1]);
