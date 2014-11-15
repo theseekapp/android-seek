@@ -76,6 +76,7 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this,ListActivity.class);
+                intent.putExtra("searchString",etSearch.getText().toString());
                 startActivity(intent);
             }
         });

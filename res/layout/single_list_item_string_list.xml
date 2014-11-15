@@ -32,9 +32,6 @@
             android:layout_gravity="center_horizontal|right"
             android:layout_marginRight="10sp"
             android:button="@drawable/check_box"
-            android:scaleX="0.4"
-            android:scaleY="0.4"
-            android:background="#ffffffff"
             android:checked="false" />
 
 

@@ -32,7 +32,14 @@ public class ListActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lib);
 
+
+
         etSearch = (EditText)findViewById(R.id.et_lib);
+
+        String searchTemp = getIntent().getStringExtra("searchString");
+        if(searchTemp!=null)
+            etSearch.setText(searchTemp);
+
         Button bGen = (Button)findViewById(R.id.b_gen_main);
         bGen.setOnClickListener(new View.OnClickListener() {
             @Override
