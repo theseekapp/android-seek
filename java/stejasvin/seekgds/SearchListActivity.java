@@ -56,18 +56,20 @@ public class SearchListActivity extends ActionBarActivity {
     private TextView fileName;
     private BroadcastReceiver uploadReceiver;
     private LinearLayout llOnline;
+    private int globalMode = Constants.RB_ALL;
 
     RadioButton rbOnline;
     RadioButton rbLocal;
     RadioButton rbAll;
-    RadioButton rbFile;
-    int currRbPos = Constants.RB_ALL;   //0-all,1-file,2-online,3-local
+    RadioGroup rgMode;
+
 
     public static class manageMedia{
+
         public static Button bMainPlay;
         public static int currPlay;
         public static List<Button> bPlayList;
-        public static boolean flagFirst;
+        public static boolean flagFirst=true; //for initialzing media
 
         public static void init(Button main,List<Button> list){
             bMainPlay = main;
@@ -144,18 +146,37 @@ public class SearchListActivity extends ActionBarActivity {
         bPause = (Button)findViewById(R.id.b_pause_search);
         onlineListView = (ListView)findViewById(R.id.online_list_search);
         llOnline =(LinearLayout)findViewById(R.id.ll_online_search);
+        etSearch = (EditText)findViewById(R.id.et_main);
+
+        String sSearch = getIntent().getStringExtra("searchString");
+        if(sSearch!=null)
+            etSearch.setText(sSearch);
+
+        rgMode=(RadioGroup)findViewById(R.id.rg_search);
+        rgMode.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                if(i==R.id.rb_all_search)
+                    globalMode=Constants.RB_ALL;
+                else if(i==R.id.rb_local_search)
+                    globalMode=Constants.RB_LOCAL;
+                else if(i==R.id.rb_online_search)
+                    globalMode=Constants.RB_ONLINE;
+                startPopulatingList();
+            }
+        });
 
         rbAll=(RadioButton)findViewById(R.id.rb_all_search);
+        rbAll.setChecked(true);
         rbLocal=(RadioButton)findViewById(R.id.rb_local_search);
         rbOnline=(RadioButton)findViewById(R.id.rb_online_search);
-        rbFile=(RadioButton)findViewById(R.id.rb_file_search);
 
         seekbar.setClickable(false);
         bPause.setEnabled(false);
         //onlineListView.setVisibility(View.GONE);
         //llOnline.setVisibility(View.VISIBLE);
 
-        etSearch = (EditText)findViewById(R.id.et_main);
+
 
         startPopulatingList();
         setListViews();
@@ -209,7 +230,7 @@ public class SearchListActivity extends ActionBarActivity {
         bPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //playAudio(Constants.LIB_PATH + "/Oh Penne.mp3");
+                playAudio(Constants.LIB_PATH + "/Oh Penne.mp3");
                 bPlay.setVisibility(View.GONE);
                 bPause.setVisibility(View.VISIBLE);
                 bPause.setEnabled(true);
@@ -279,12 +300,9 @@ public class SearchListActivity extends ActionBarActivity {
 //            searchListAdapter.clear();
 //            return;
 //        }
-
-
         ListView list = (ListView)findViewById(R.id.list_search);
         searchListAdapter =new SearchListAdapter(this,searchArray,mediaPlayer,seekbar,myHandler,UpdateSongTime,bPause,bPlay,fileName);
         list.setAdapter(searchListAdapter);
-
         //onlineListView.setVisibility(View.GONE);
         //llOnline.setVisibility(View.VISIBLE);
 
@@ -369,14 +387,19 @@ public class SearchListActivity extends ActionBarActivity {
         }
     }
 
-    public void startPopulatingList(){
-        if(!etSearch.getText().toString().equals("")) {
+    public void callDownloadService(){
+        Intent serviceIntent = new Intent(SearchListActivity.this,SeekDataDownloadService.class);
+        serviceIntent.putExtra("searchString",etSearch.getText().toString());
+//        serviceIntent.putExtra("mode",mode);
+        startService(serviceIntent);
 
+    }
+
+    public void startPopulatingList(){
+        int mode = globalMode;
+        if(!etSearch.getText().toString().equals("")) {
             //Toast.makeText(SearchListActivity.this, "\"Seeking\"...", Toast.LENGTH_SHORT).show();
             //Online service started
-            Intent serviceIntent = new Intent(SearchListActivity.this,SeekDataDownloadService.class);
-            serviceIntent.putExtra("searchString",etSearch.getText().toString());
-            startService(serviceIntent);
 
             //onlineListView.setVisibility(View.GONE);
             //llOnline.setVisibility(View.VISIBLE);
@@ -384,6 +407,21 @@ public class SearchListActivity extends ActionBarActivity {
             ArrayList<SearchResult> totList = Utilities.searchThruFiles(etSearch.getText().toString());
 
             if(totList!=null && totList.size()>0){
+
+                //for(int i=0;i<totList.size();i++) {
+                    if(mode==Constants.RB_ONLINE) {
+                        totList.clear();
+                        callDownloadService();
+                    }
+                    else if(mode==Constants.RB_LOCAL) {
+                        //continue
+                    }
+                    else if(mode==Constants.RB_ALL){
+                        callDownloadService();
+                    }
+
+                //}
+
                 searchArray.clear();
                 searchArray.addAll(totList);
                 if(searchListAdapter!=null)
@@ -398,8 +436,8 @@ public class SearchListActivity extends ActionBarActivity {
                 //searchListAdapter.clear();
             }
         }
-        else
-            Toast.makeText(SearchListActivity.this,"Enter valid stuff",Toast.LENGTH_SHORT).show();
+        //else
+        //    Toast.makeText(SearchListActivity.this,"Enter valid stuff",Toast.LENGTH_SHORT).show();
     }
 
 }

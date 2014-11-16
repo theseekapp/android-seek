@@ -127,7 +127,8 @@
             <RadioGroup
                 android:id="@+id/rg_search"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
             
             <RadioButton
                 android:id="@+id/rb_local_search"
@@ -155,8 +156,8 @@
 
     </LinearLayout>
 
-    <RadioButton
-        android:id="@+id/rb_file_search"
+    <TextView
+        android:id="@+id/tv_filename_search"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
