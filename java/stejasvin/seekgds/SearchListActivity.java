@@ -19,6 +19,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,6 +56,12 @@ public class SearchListActivity extends ActionBarActivity {
     private TextView fileName;
     private BroadcastReceiver uploadReceiver;
     private LinearLayout llOnline;
+
+    RadioButton rbOnline;
+    RadioButton rbLocal;
+    RadioButton rbAll;
+    RadioButton rbFile;
+    int currRbPos = Constants.RB_ALL;   //0-all,1-file,2-online,3-local
 
     public static class manageMedia{
         public static Button bMainPlay;
@@ -137,6 +145,11 @@ public class SearchListActivity extends ActionBarActivity {
         onlineListView = (ListView)findViewById(R.id.online_list_search);
         llOnline =(LinearLayout)findViewById(R.id.ll_online_search);
 
+        rbAll=(RadioButton)findViewById(R.id.rb_all_search);
+        rbLocal=(RadioButton)findViewById(R.id.rb_local_search);
+        rbOnline=(RadioButton)findViewById(R.id.rb_online_search);
+        rbFile=(RadioButton)findViewById(R.id.rb_file_search);
+
         seekbar.setClickable(false);
         bPause.setEnabled(false);
         //onlineListView.setVisibility(View.GONE);
@@ -144,30 +157,7 @@ public class SearchListActivity extends ActionBarActivity {
 
         etSearch = (EditText)findViewById(R.id.et_main);
 
-        if(getIntent().getStringExtra("searchString")!=null) {
-            Toast.makeText(SearchListActivity.this, "\"Seeking\"...", Toast.LENGTH_SHORT).show();
-
-            etSearch.setText(getIntent().getStringExtra("searchString"));
-
-            //Online service started
-            Intent serviceIntent = new Intent(SearchListActivity.this,SeekDataDownloadService.class);
-            serviceIntent.putExtra("searchString",etSearch.getText().toString());
-            startService(serviceIntent);
-
-            ArrayList<SearchResult> totList = Utilities.searchThruFiles(etSearch.getText().toString());
-            if (totList != null && totList.size() > 0) {
-                //String[] tempList = new String[100];
-                searchArray = totList;
-                InputMethodManager imm = (InputMethodManager) getSystemService(
-                        Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
-            } else {
-                Toast.makeText(SearchListActivity.this, "Results Not Found", Toast.LENGTH_SHORT).show();
-                //searchListAdapter.clear();
-            }
-
-        }
-
+        startPopulatingList();
         setListViews();
 //        searchArray = getIntent().getParcelableArrayListExtra("searchList");
 //        if(searchArray == null || searchArray.size()==0) {
@@ -184,38 +174,8 @@ public class SearchListActivity extends ActionBarActivity {
         bGen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                startPopulatingList();
 
-                if(!etSearch.getText().toString().equals("")) {
-
-                    Toast.makeText(SearchListActivity.this, "\"Seeking\"...", Toast.LENGTH_SHORT).show();
-
-                    //Online service started
-                    Intent serviceIntent = new Intent(SearchListActivity.this,SeekDataDownloadService.class);
-                    serviceIntent.putExtra("searchString",etSearch.getText().toString());
-                    startService(serviceIntent);
-
-                    //onlineListView.setVisibility(View.GONE);
-                    //llOnline.setVisibility(View.VISIBLE);
-
-                    ArrayList<SearchResult> totList = Utilities.searchThruFiles(etSearch.getText().toString());
-
-                    if(totList!=null && totList.size()>0){
-                        searchArray.clear();
-                        searchArray.addAll(totList);
-                        if(searchListAdapter!=null)
-                            searchListAdapter.notifyDataSetChanged();
-
-                        InputMethodManager imm = (InputMethodManager)getSystemService(
-                                Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
-
-                    }else{
-                        Toast.makeText(SearchListActivity.this, "Results Not Found", Toast.LENGTH_SHORT).show();
-                        //searchListAdapter.clear();
-                    }
-                }
-                else
-                    Toast.makeText(SearchListActivity.this,"Enter valid stuff",Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -249,7 +209,7 @@ public class SearchListActivity extends ActionBarActivity {
         bPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                playAudio(Constants.LIB_PATH + "/Oh Penne.mp3");
+                //playAudio(Constants.LIB_PATH + "/Oh Penne.mp3");
                 bPlay.setVisibility(View.GONE);
                 bPause.setVisibility(View.VISIBLE);
                 bPause.setEnabled(true);
@@ -310,6 +270,7 @@ public class SearchListActivity extends ActionBarActivity {
             e.printStackTrace();
         }
     }
+
 
     public void setListViews(){
 //        //searchArray = getIntent().getParcelableArrayListExtra("searchList");
@@ -380,11 +341,17 @@ public class SearchListActivity extends ActionBarActivity {
         }
     };
 
+    void processSearchArrayRb(){
+
+    }
 
     /**
      * Receiving speech input
      * */
     @Override
+
+
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
@@ -402,6 +369,37 @@ public class SearchListActivity extends ActionBarActivity {
         }
     }
 
+    public void startPopulatingList(){
+        if(!etSearch.getText().toString().equals("")) {
 
+            //Toast.makeText(SearchListActivity.this, "\"Seeking\"...", Toast.LENGTH_SHORT).show();
+            //Online service started
+            Intent serviceIntent = new Intent(SearchListActivity.this,SeekDataDownloadService.class);
+            serviceIntent.putExtra("searchString",etSearch.getText().toString());
+            startService(serviceIntent);
+
+            //onlineListView.setVisibility(View.GONE);
+            //llOnline.setVisibility(View.VISIBLE);
+
+            ArrayList<SearchResult> totList = Utilities.searchThruFiles(etSearch.getText().toString());
+
+            if(totList!=null && totList.size()>0){
+                searchArray.clear();
+                searchArray.addAll(totList);
+                if(searchListAdapter!=null)
+                    searchListAdapter.notifyDataSetChanged();
+
+                InputMethodManager imm = (InputMethodManager)getSystemService(
+                        Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
+
+            }else{
+              //  Toast.makeText(SearchListActivity.this, "Results Not Found", Toast.LENGTH_SHORT).show();
+                //searchListAdapter.clear();
+            }
+        }
+        else
+            Toast.makeText(SearchListActivity.this,"Enter valid stuff",Toast.LENGTH_SHORT).show();
+    }
 
 }

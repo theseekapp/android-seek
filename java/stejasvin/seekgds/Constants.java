@@ -19,5 +19,10 @@ public class Constants {
     public static final String JSON_SEEK = "prev_line";
     public static final String JSON_TEXT = "line";
 
+    //RB constants
+    public static final int RB_ALL = 0;
+    public static final int RB_FILE = 1;
+    public static final int RB_ONLINE = 2;
+    public static final int RB_LOCAL = 3;
 
 }
