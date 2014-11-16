@@ -62,6 +62,9 @@ public class SeekDataDownloadService extends IntentService {
     private void handleActionFoo(String sSearch) {
         // TODO: Handle action Foo
 
+        //Processing input
+        sSearch=sSearch.replace(" ","_");
+
         String urlGetData = Constants.ROOT_URL + sSearch + "/";
         String resp = "";
         boolean success = false;

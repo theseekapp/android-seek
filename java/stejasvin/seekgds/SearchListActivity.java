@@ -242,6 +242,9 @@ public class SearchListActivity extends ActionBarActivity {
         bGen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                InputMethodManager imm = (InputMethodManager)getSystemService(
+                        Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
                 startPopulatingList();
 
             }
@@ -446,42 +449,32 @@ public class SearchListActivity extends ActionBarActivity {
     public void startPopulatingList(){
         int mode = globalMode;
         if(!etSearch.getText().toString().equals("")) {
-            //Toast.makeText(SearchListActivity.this, "\"Seeking\"...", Toast.LENGTH_SHORT).show();
-            //Online service started
-
-            //onlineListView.setVisibility(View.GONE);
-            //llOnline.setVisibility(View.VISIBLE);
 
             ArrayList<SearchResult> totList = Utilities.searchThruFiles(etSearch.getText().toString());
 
-            if(totList!=null && totList.size()>0){
+            boolean goFlag = true;
+            if(searchListAdapter!=null)
+                searchListAdapter.clear();
 
-                //for(int i=0;i<totList.size();i++) {
-                    if(mode==Constants.RB_ONLINE) {
-                        totList.clear();
-                        callDownloadService();
-                    }
-                    else if(mode==Constants.RB_LOCAL) {
-                        //continue
-                    }
-                    else if(mode==Constants.RB_ALL){
-                        callDownloadService();
-                    }
-
-                //}
+            if(mode==Constants.RB_ONLINE) {
+                totList.clear();
+                callDownloadService();
+                goFlag = false;
+            }
+            else if(mode==Constants.RB_LOCAL) {
+                //continue
+            }
+            else{
+                callDownloadService();
+            }
+            if(goFlag && totList!=null && totList.size()>0){
 
                 searchArray.clear();
                 searchArray.addAll(totList);
                 if(searchListAdapter!=null)
                     searchListAdapter.notifyDataSetChanged();
 
-                InputMethodManager imm = (InputMethodManager)getSystemService(
-                        Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
 
-            }else{
-              //  Toast.makeText(SearchListActivity.this, "Results Not Found", Toast.LENGTH_SHORT).show();
-                //searchListAdapter.clear();
             }
         }
         //else
