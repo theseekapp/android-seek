@@ -59,9 +59,9 @@ public class SearchListActivity extends ActionBarActivity {
     private LinearLayout llOnline;
     private int globalMode = Constants.RB_ALL;
 
-    RadioButton rbOnline;
-    RadioButton rbLocal;
-    RadioButton rbAll;
+    Button rbOnline;
+    Button rbLocal;
+    Button rbAll;
     RadioGroup rgMode;
 
 
@@ -153,24 +153,70 @@ public class SearchListActivity extends ActionBarActivity {
         if(sSearch!=null)
             etSearch.setText(sSearch);
 
-        rgMode=(RadioGroup)findViewById(R.id.rg_search);
-        rgMode.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        rbAll=(Button)findViewById(R.id.rb_all_search);
+        //rbAll.setChecked(true);
+        rbLocal=(Button)findViewById(R.id.rb_local_search);
+        rbOnline=(Button)findViewById(R.id.rb_online_search);
+
+        rbAll.setBackgroundResource(R.drawable.all_active);
+        rbLocal.setBackgroundResource(R.drawable.local);
+        rbOnline.setBackgroundResource(R.drawable.online);
+        globalMode=Constants.RB_ALL;
+
+//        rgMode=(RadioGroup)findViewById(R.id.rg_search);
+//        rgMode.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+//                if(i==R.id.rb_all_search)
+//                    globalMode=Constants.RB_ALL;
+//                else if(i==R.id.rb_local_search)
+//                    globalMode=Constants.RB_LOCAL;
+//                else if(i==R.id.rb_online_search)
+//                    globalMode=Constants.RB_ONLINE;
+//                startPopulatingList();
+//            }
+//        });
+
+
+        rbAll.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                if(i==R.id.rb_all_search)
-                    globalMode=Constants.RB_ALL;
-                else if(i==R.id.rb_local_search)
-                    globalMode=Constants.RB_LOCAL;
-                else if(i==R.id.rb_online_search)
-                    globalMode=Constants.RB_ONLINE;
+            public void onClick(View view) {
+                //if(!rbAll.is()) {
+                rbAll.setBackgroundResource(R.drawable.all_active);
+                rbLocal.setBackgroundResource(R.drawable.local);
+                rbOnline.setBackgroundResource(R.drawable.online);
+                globalMode=Constants.RB_ALL;
                 startPopulatingList();
+//                    rbLocal.setEnabled(false);
+//                    rbOnline.setEnabled(false);
+
+                //}
             }
         });
 
-        rbAll=(RadioButton)findViewById(R.id.rb_all_search);
-        rbAll.setChecked(true);
-        rbLocal=(RadioButton)findViewById(R.id.rb_local_search);
-        rbOnline=(RadioButton)findViewById(R.id.rb_online_search);
+        rbLocal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                rbAll.setBackgroundResource(R.drawable.all);
+                rbLocal.setBackgroundResource(R.drawable.local_active);
+                rbOnline.setBackgroundResource(R.drawable.online);
+                globalMode=Constants.RB_LOCAL;
+                startPopulatingList();
+
+            }
+        });
+
+        rbOnline.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                rbAll.setBackgroundResource(R.drawable.all);
+                rbLocal.setBackgroundResource(R.drawable.local);
+                rbOnline.setBackgroundResource(R.drawable.online_active);
+                globalMode=Constants.RB_ONLINE;
+                startPopulatingList();
+                //}
+            }
+        });
 
         seekbar.setClickable(false);
         bPause.setEnabled(false);
