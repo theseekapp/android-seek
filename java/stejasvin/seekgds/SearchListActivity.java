@@ -64,7 +64,7 @@ public class SearchListActivity extends ActionBarActivity {
     RadioGroup rgMode;
 
 
-    public static class manageMedia{
+    public static class ManageMedia{
 
         public static Button bMainPlay;
         public static int currPlay;
@@ -136,8 +136,8 @@ public class SearchListActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_list_new);
-        String filePath = Environment.getExternalStorageDirectory()+"/SeekLib/Pinocchio.mp3";
-        mediaPlayer = MediaPlayer.create(this,Uri.fromFile(new File(filePath)));
+//        String filePath = Environment.getExternalStorageDirectory()+"/SeekLib/Pinocchio.mp3";
+//        mediaPlayer = MediaPlayer.create(this,Uri.fromFile(new File(filePath)));
         fileName = (TextView)findViewById(R.id.tv_filename_search);
         startTimeField =(TextView)findViewById(R.id.tv_start_search);
         endTimeField =(TextView)findViewById(R.id.tv_end_search);
@@ -230,7 +230,7 @@ public class SearchListActivity extends ActionBarActivity {
         bPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                playAudio(Constants.LIB_PATH + "/Oh Penne.mp3");
+                playAudio("");
                 bPlay.setVisibility(View.GONE);
                 bPause.setVisibility(View.VISIBLE);
                 bPause.setEnabled(true);
@@ -255,13 +255,13 @@ public class SearchListActivity extends ActionBarActivity {
 
 
         //First run
-        try {
-            if(mediaPlayer.getDuration()==0)
-                mediaPlayer.setDataSource(filePath);
+//        try {
+            //if(mediaPlayer.getDuration()==0)
+            //    mediaPlayer.setDataSource(filePath);
             //So that audio doesnt play
             //mediaPlayer.start();
-            finalTime = mediaPlayer.getDuration();
-            startTime = mediaPlayer.getCurrentPosition();
+            //finalTime = mediaPlayer.getDuration();
+            //startTime = mediaPlayer.getCurrentPosition();
             if(oneTimeOnly == 0){
                 seekbar.setMax((int) finalTime);
                 oneTimeOnly = 1;
@@ -286,10 +286,10 @@ public class SearchListActivity extends ActionBarActivity {
             bPause.setVisibility(View.GONE);
             bPlay.setVisibility(View.VISIBLE);
             //mediaPlayer.seekTo(searchResult.seekTime);
-        } catch (IOException e) {
-            Toast.makeText(SearchListActivity.this, "Error in playing.. " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
-        }
+//        } catch (IOException e) {
+//            Toast.makeText(SearchListActivity.this, "Error in playing.. " + e.getMessage(), Toast.LENGTH_SHORT).show();
+//            e.printStackTrace();
+//        }
     }
 
 
@@ -301,7 +301,7 @@ public class SearchListActivity extends ActionBarActivity {
 //            return;
 //        }
         ListView list = (ListView)findViewById(R.id.list_search);
-        searchListAdapter =new SearchListAdapter(this,searchArray,mediaPlayer,seekbar,myHandler,UpdateSongTime,bPause,bPlay,fileName);
+        searchListAdapter =new SearchListAdapter(this,searchArray,mediaPlayer,seekbar,myHandler,UpdateSongTime,bPause,bPlay,fileName,etSearch.getText().toString());
         list.setAdapter(searchListAdapter);
         //onlineListView.setVisibility(View.GONE);
         //llOnline.setVisibility(View.VISIBLE);
@@ -311,8 +311,12 @@ public class SearchListActivity extends ActionBarActivity {
 
     public void playAudio(String filePath){//,MediaPlayer mediaPlayer,int finalTime,int startTime,int oneTimeOnly,SeekBar seekbar,){
         try {
-            if(mediaPlayer.getDuration()==0)
+            if(mediaPlayer.getDuration()==0 && !filePath.equals(""))
                 mediaPlayer.setDataSource(filePath);
+            else {
+                Toast.makeText(SearchListActivity.this,"No media selected", Toast.LENGTH_LONG);
+                return;
+            }
             mediaPlayer.start();
             finalTime = mediaPlayer.getDuration();
             startTime = mediaPlayer.getCurrentPosition();
@@ -430,6 +434,11 @@ public class SearchListActivity extends ActionBarActivity {
                 InputMethodManager imm = (InputMethodManager)getSystemService(
                         Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
+
+                //String filePath = Environment.getExternalStorageDirectory()+"/SeekLib/Pinocchio.mp3";
+
+                //mediaPlayer = MediaPlayer.create(this,Uri.fromFile(new File(filePath)));
+
 
             }else{
               //  Toast.makeText(SearchListActivity.this, "Results Not Found", Toast.LENGTH_SHORT).show();

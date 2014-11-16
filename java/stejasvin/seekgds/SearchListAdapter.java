@@ -32,6 +32,7 @@ import java.util.List;
 
 public class SearchListAdapter extends ArrayAdapter {
 
+    private final String searchString;
     List<SearchResult> searchList;
     int textViewResourceId = R.layout.single_list_item_string_search;
 
@@ -47,7 +48,7 @@ public class SearchListAdapter extends ArrayAdapter {
     TextView fileName;
 
     public SearchListAdapter(Context context, ArrayList<SearchResult> searchList, MediaPlayer mediaPlayer,
-                             SeekBar seekbar,Handler seekHandler,Runnable runnable,Button bPause, Button bPlay,TextView fileName) {
+                             SeekBar seekbar,Handler seekHandler,Runnable runnable,Button bPause, Button bPlay,TextView fileName,String searchString) {
         super(context, R.layout.single_list_item_string_search, searchList);
         this.context = context;
         this.searchList = searchList;
@@ -58,6 +59,7 @@ public class SearchListAdapter extends ArrayAdapter {
         this.bPlay = bPlay;
         this.bPause = bPause;
         this.fileName = fileName;
+        this.searchString = searchString;
 
     }
 
@@ -75,8 +77,38 @@ public class SearchListAdapter extends ArrayAdapter {
         TextView tvName = (TextView) row.findViewById(R.id.tv_filename_search_sli);
         tvName.setText(searchResult.getFileName().replace(".txt", ".mp3") + " : " + searchResult.getSeekString());
 
+        //reducing length of subs
         final TextView tvSubs = (TextView) row.findViewById(R.id.tv_search_sli);
-        tvSubs.setText(searchResult.getSubtitle());
+//        int iSearch = searchResult.getSubtitle().indexOf(searchString);
+//        String temp = "",temp1="";
+//        String subs = searchResult.getSubtitle();
+//        String tempArray[] = subs.split(" ");
+//        boolean flagText=true;
+//        int count=0;
+//        for(int i=0;i<tempArray.length;i++){
+//            if(!tempArray[i].contains(searchString))
+//                count++;
+//            else
+//                break;
+//        }
+//
+//        if(count>3) {
+//            for (int i = count-2; i < tempArray.length; i++)
+//                temp += tempArray[i];
+//            flagText=false;
+//        }
+//        String tempArray1[] = temp.split(" ");
+//        if(tempArray1.length>10) {
+//            for (int i = 0; i < tempArray1.length - 4; i++)
+//                temp1 += tempArray1[i];
+//            flagText=false;
+//        }
+//
+//        if(flagText)
+            tvSubs.setText(searchResult.getSubtitle());
+//        else
+//            tvSubs.setText(temp1);
+
 
         final TextView tvStatus = (TextView) row.findViewById(R.id.tv_status_sli);
         if(searchResult.filePath.contains("https://"))
@@ -89,6 +121,7 @@ public class SearchListAdapter extends ArrayAdapter {
             @Override
             public void onClick(View view) {
                 //online youtube link
+
                 if (searchResult.filePath.contains("https://")) {
                     if (mp != null && mp.isPlaying()) {
                         mp.pause();
@@ -132,6 +165,10 @@ public class SearchListAdapter extends ArrayAdapter {
                 }
                 //local repo link
                 else {
+                    if(SearchListActivity.ManageMedia.flagFirst) {
+                        mp = MediaPlayer.create(context, Uri.fromFile(new File(searchResult.filePath)));
+                        SearchListActivity.ManageMedia.flagFirst=false;
+                    }
 
                     String path = Constants.ROOT_LOCAL_PATH + searchResult.getFileName().replace(".txt", ".mp3");
                     File file = new File(path);
