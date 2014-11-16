@@ -45,6 +45,7 @@ public class SearchListActivity extends ActionBarActivity {
     private double finalTime = 0;
     private Handler myHandler = new Handler();
     private SeekBar seekbar;
+    //private SeekBar seekbar1;
     public static int oneTimeOnly = 0;
     private EditText etSearch;
     private ArrayList<SearchResult> searchArray = new ArrayList<SearchResult>();
@@ -262,10 +263,10 @@ public class SearchListActivity extends ActionBarActivity {
             //mediaPlayer.start();
             finalTime = mediaPlayer.getDuration();
             startTime = mediaPlayer.getCurrentPosition();
-            if(oneTimeOnly == 0){
+            //if(oneTimeOnly == 0){
                 seekbar.setMax((int) finalTime);
-                oneTimeOnly = 1;
-            }
+            //    oneTimeOnly = 1;
+            //}
 
             endTimeField.setText(String.format("%d min, %d sec",
                             TimeUnit.MILLISECONDS.toMinutes((long) finalTime),
@@ -355,6 +356,7 @@ public class SearchListActivity extends ActionBarActivity {
             );
             //int progressTime = (int)(startTime/finalTime*100);
             seekbar.setProgress(mediaPlayer.getCurrentPosition());
+            seekbar.setMax(mediaPlayer.getDuration());
             myHandler.postDelayed(this, 100);
         }
     };

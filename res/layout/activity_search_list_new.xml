@@ -132,24 +132,32 @@
             
             <RadioButton
                 android:id="@+id/rb_local_search"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="85dp"
+                android:layout_height="30dp"
+                android:layout_margin="10sp"
                 android:layout_weight="1"
-                android:text="Local" />
+                android:background="@drawable/loal_label"
+                android:drawableEnd="#000000"
+
+                 />
+
+
 
             <RadioButton
                 android:id="@+id/rb_online_search"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="85dp"
+                android:layout_height="30dp"
                 android:layout_weight="1"
-                android:text="Online" />
+                android:background="@drawable/online_label"
+                android:layout_margin="10sp"/>
 
             <RadioButton
                 android:id="@+id/rb_all_search"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="85dp"
+                android:layout_height="30dp"
                 android:layout_weight="1"
-                android:text="All" />
+                android:background="@drawable/all_label"
+                android:layout_margin="10sp"/>
             </RadioGroup>
 
         </LinearLayout>
