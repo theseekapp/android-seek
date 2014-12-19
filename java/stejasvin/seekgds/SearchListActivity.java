@@ -57,6 +57,7 @@ public class SearchListActivity extends ActionBarActivity {
     private TextView fileName;
     private BroadcastReceiver uploadReceiver;
     private LinearLayout llOnline;
+    private LinearLayout llPlayer;
     private int globalMode = Constants.RB_ALL;
 
     Button rbOnline;
@@ -137,8 +138,10 @@ public class SearchListActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_list_new);
-        String filePath = Environment.getExternalStorageDirectory()+"/SeekLib/Pinocchio.mp3";
-        mediaPlayer = MediaPlayer.create(this,Uri.fromFile(new File(filePath)));
+        String filePath;
+
+        mediaPlayer = new MediaPlayer();
+
         fileName = (TextView)findViewById(R.id.tv_filename_search);
         startTimeField =(TextView)findViewById(R.id.tv_start_search);
         endTimeField =(TextView)findViewById(R.id.tv_end_search);
@@ -147,6 +150,8 @@ public class SearchListActivity extends ActionBarActivity {
         bPause = (Button)findViewById(R.id.b_pause_search);
         onlineListView = (ListView)findViewById(R.id.online_list_search);
         llOnline =(LinearLayout)findViewById(R.id.ll_online_search);
+        llPlayer =(LinearLayout)findViewById(R.id.player_layout_main);
+        llPlayer.setVisibility(View.GONE);
         etSearch = (EditText)findViewById(R.id.et_main);
 
         String sSearch = getIntent().getStringExtra("searchString");
@@ -163,20 +168,6 @@ public class SearchListActivity extends ActionBarActivity {
         rbOnline.setBackgroundResource(R.drawable.online);
         globalMode=Constants.RB_ALL;
 
-//        rgMode=(RadioGroup)findViewById(R.id.rg_search);
-//        rgMode.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(RadioGroup radioGroup, int i) {
-//                if(i==R.id.rb_all_search)
-//                    globalMode=Constants.RB_ALL;
-//                else if(i==R.id.rb_local_search)
-//                    globalMode=Constants.RB_LOCAL;
-//                else if(i==R.id.rb_online_search)
-//                    globalMode=Constants.RB_ONLINE;
-//                startPopulatingList();
-//            }
-//        });
-
 
         rbAll.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -187,10 +178,6 @@ public class SearchListActivity extends ActionBarActivity {
                 rbOnline.setBackgroundResource(R.drawable.online);
                 globalMode=Constants.RB_ALL;
                 startPopulatingList();
-//                    rbLocal.setEnabled(false);
-//                    rbOnline.setEnabled(false);
-
-                //}
             }
         });
 
@@ -214,7 +201,6 @@ public class SearchListActivity extends ActionBarActivity {
                 rbOnline.setBackgroundResource(R.drawable.online_active);
                 globalMode=Constants.RB_ONLINE;
                 startPopulatingList();
-                //}
             }
         });
 
@@ -303,43 +289,43 @@ public class SearchListActivity extends ActionBarActivity {
             }
         });
 
-
-        //First run
-        try {
-            if(mediaPlayer.getDuration()==0)
-                mediaPlayer.setDataSource(filePath);
-            //So that audio doesnt play
-            //mediaPlayer.start();
-            finalTime = mediaPlayer.getDuration();
-            startTime = mediaPlayer.getCurrentPosition();
-            //if(oneTimeOnly == 0){
-                seekbar.setMax((int) finalTime);
-            //    oneTimeOnly = 1;
-            //}
-
-            endTimeField.setText(String.format("%d min, %d sec",
-                            TimeUnit.MILLISECONDS.toMinutes((long) finalTime),
-                            TimeUnit.MILLISECONDS.toSeconds((long) finalTime) -
-                                    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.
-                                            toMinutes((long) finalTime)))
-            );
-            startTimeField.setText(String.format("%d min, %d sec",
-                            TimeUnit.MILLISECONDS.toMinutes((long) startTime),
-                            TimeUnit.MILLISECONDS.toSeconds((long) startTime) -
-                                    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.
-                                            toMinutes((long) startTime)))
-            );
-            //seekbar.setProgress((int)(startTime/finalTime*100));
-            myHandler.postDelayed(UpdateSongTime,100);
-            bPlay.setEnabled(false);
-            bPause.setEnabled(false);
-            bPause.setVisibility(View.GONE);
-            bPlay.setVisibility(View.VISIBLE);
-            //mediaPlayer.seekTo(searchResult.seekTime);
-        } catch (IOException e) {
-            Toast.makeText(SearchListActivity.this, "Error in playing.. " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
-        }
+//        //First run
+//        //try {
+//            //if(mediaPlayer.getDuration()==0)
+//            //    mediaPlayer.setDataSource(filePath);
+//            //So that audio doesnt play
+//            //mediaPlayer.start();
+//            finalTime = 0;//mediaPlayer.getDuration();
+//            startTime = 0;//mediaPlayer.getCurrentPosition();
+//            //if(oneTimeOnly == 0){
+//            seekbar.setMax((int) finalTime);
+//            //    oneTimeOnly = 1;
+//            //}
+//            endTimeField.setText("0 min, 0 sec");
+////            endTimeField.setText(String.format("%d min, %d sec",
+////                            TimeUnit.MILLISECONDS.toMinutes((long) finalTime),
+////                            TimeUnit.MILLISECONDS.toSeconds((long) finalTime) -
+////                                    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.
+////                                            toMinutes((long) finalTime)))
+////            );
+////            startTimeField.setText(String.format("%d min, %d sec",
+////                            TimeUnit.MILLISECONDS.toMinutes((long) startTime),
+////                            TimeUnit.MILLISECONDS.toSeconds((long) startTime) -
+////                                    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.
+////                                            toMinutes((long) startTime)))
+////            );
+//            //seekbar.setProgress((int)(startTime/finalTime*100));
+//            myHandler.postDelayed(UpdateSongTime,100);
+//            bPlay.setEnabled(false);
+//            bPause.setEnabled(false);
+//            bPause.setVisibility(View.GONE);
+//            bPlay.setVisibility(View.VISIBLE);
+//            //mediaPlayer.seekTo(searchResult.seekTime);
+//        //}
+////        catch (IOException e) {
+////            Toast.makeText(SearchListActivity.this, "Error in playing.. " + e.getMessage(), Toast.LENGTH_SHORT).show();
+////            e.printStackTrace();
+////        }
     }
 
 
@@ -352,7 +338,7 @@ public class SearchListActivity extends ActionBarActivity {
 //        }
         ListView list = (ListView)findViewById(R.id.list_search);
         searchListAdapter =new SearchListAdapter(this,searchArray,mediaPlayer,seekbar,myHandler,UpdateSongTime,
-                bPause,bPlay,fileName,etSearch.getText().toString());
+                bPause,bPlay,fileName,etSearch.getText().toString(),llPlayer);
         list.setAdapter(searchListAdapter);
         //onlineListView.setVisibility(View.GONE);
         //llOnline.setVisibility(View.VISIBLE);
@@ -360,7 +346,7 @@ public class SearchListActivity extends ActionBarActivity {
 
     }
 
-    public void playAudio(String filePath){//,MediaPlayer mediaPlayer,int finalTime,int startTime,int oneTimeOnly,SeekBar seekbar,){
+    public void playAudio(String filePath) throws IllegalStateException{//,MediaPlayer mediaPlayer,int finalTime,int startTime,int oneTimeOnly,SeekBar seekbar,){
         try {
             if(mediaPlayer.getDuration()==0)
                 mediaPlayer.setDataSource(filePath);
@@ -398,11 +384,18 @@ public class SearchListActivity extends ActionBarActivity {
     private Runnable UpdateSongTime = new Runnable() {
         public void run() {
             startTime = mediaPlayer.getCurrentPosition();
+            finalTime = mediaPlayer.getDuration();
             startTimeField.setText(String.format("%d min, %d sec",
                             TimeUnit.MILLISECONDS.toMinutes((long) startTime),
                             TimeUnit.MILLISECONDS.toSeconds((long) startTime) -
                                     TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.
                                             toMinutes((long) startTime)))
+            );
+            endTimeField.setText(String.format("%d min, %d sec",
+                            TimeUnit.MILLISECONDS.toMinutes((long) finalTime),
+                            TimeUnit.MILLISECONDS.toSeconds((long) finalTime) -
+                                    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.
+                                            toMinutes((long) finalTime)))
             );
             //int progressTime = (int)(startTime/finalTime*100);
             seekbar.setProgress(mediaPlayer.getCurrentPosition());
@@ -411,9 +404,6 @@ public class SearchListActivity extends ActionBarActivity {
         }
     };
 
-    void processSearchArrayRb(){
-
-    }
 
     /**
      * Receiving speech input

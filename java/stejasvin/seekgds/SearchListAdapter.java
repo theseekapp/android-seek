@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -46,10 +47,11 @@ public class SearchListAdapter extends ArrayAdapter {
     Button bPause,bPlay;
     TextView fileName;
     String searchString;
+    LinearLayout llPlayer;
 
     public SearchListAdapter(Context context, ArrayList<SearchResult> searchList, MediaPlayer mediaPlayer,
                              SeekBar seekbar,Handler seekHandler,Runnable runnable,Button bPause, Button bPlay,
-                             TextView fileName,String searchString) {
+                             TextView fileName,String searchString, LinearLayout llPlayer) {
         super(context, R.layout.single_list_item_string_search, searchList);
         this.context = context;
         this.searchList = searchList;
@@ -61,6 +63,7 @@ public class SearchListAdapter extends ArrayAdapter {
         this.bPause = bPause;
         this.fileName = fileName;
         this.searchString = searchString;
+        this.llPlayer = llPlayer;
 
     }
 
@@ -158,7 +161,9 @@ public class SearchListAdapter extends ArrayAdapter {
                             }
                         });
                         mp.prepareAsync();
+                        seekBar.setMax((int) mp.getDuration());
                         fileName.setText(searchResult.getFileName().replace(".txt", ".mp3"));
+                        llPlayer.setVisibility(View.VISIBLE);
                         //mp.start();
                         //mp.seekTo(searchResult.seekTime);
                     } catch (IOException e) {

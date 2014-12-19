@@ -160,22 +160,24 @@ public class Utilities {
     public static String processSubtitle(String subs,String search){
         int index = subs.indexOf(search,0);
         String processed1,processed2;
-        if(index>30) {
-            //processed = subs.substring(index - 25);
-            processed1 = subs.substring(subs.indexOf(" ",15));//start of string
-        }
-        else
-            processed1=subs;
+        if(subs.contains(search)) {
+            if (index > 30) {
+                //processed = subs.substring(index - 25);
+                processed1 = subs.substring(subs.indexOf(" ", 15));//start of string
+            } else
+                processed1 = subs;
 
-        if(processed1.length()-index>30) {
-            int iEnd = processed1.indexOf(" ",index+15);
-            if(iEnd!=-1)
-                processed2 = processed1.substring(0,iEnd);//end of string
-            else
+            if (processed1.length() - index > 30) {
+                int iEnd = processed1.indexOf(" ", index + 15);
+                if (iEnd != -1)
+                    processed2 = processed1.substring(0, iEnd);//end of string
+                else
+                    processed2 = processed1;
+            } else
                 processed2 = processed1;
+        }else{
+            processed2 = subs.substring(subs.indexOf(" ", (int)(subs.length()/2)));
         }
-        else
-            processed2=processed1;
 
         return processed2;
     }
