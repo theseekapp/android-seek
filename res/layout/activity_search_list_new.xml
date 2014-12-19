@@ -170,6 +170,22 @@
         android:layout_height="2dp"
         android:background="#8d0c1e" />
 
+    <TextView
+        android:id="@+id/tv_listempty_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:padding="10sp"
+        android:textSize="20sp"
+        android:visibility="gone"
+        android:text="No results found" />
+
+    <ProgressBar
+        android:id="@+id/pb_online_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"/>
 
     <ListView
         android:id="@+id/list_search"

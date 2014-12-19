@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
@@ -55,9 +56,12 @@ public class SearchListActivity extends ActionBarActivity {
     private ListView onlineListView;
     private ListView listView;
     private TextView fileName;
+    private TextView listEmpty;
     private BroadcastReceiver uploadReceiver;
     private LinearLayout llOnline;
     private LinearLayout llPlayer;
+    private ProgressBar pbOnline;
+
     private int globalMode = Constants.RB_ALL;
 
     Button rbOnline;
@@ -109,7 +113,12 @@ public class SearchListActivity extends ActionBarActivity {
                     //searchResult.setFileName("DUmmy");
                     searchArray.addAll(onlineSearchArray);
                     searchListAdapter.notifyDataSetChanged();
+                    pbOnline.setVisibility(View.GONE);
 
+                    if(searchArray.size()>0)
+                        listEmpty.setVisibility(View.GONE);
+                    else
+                        listEmpty.setVisibility(View.VISIBLE);
 //                    if(onlineSearchArray.size()==0) {
 //                        onlineListView.setVisibility(View.GONE);
 //                        llOnline.setVisibility(View.VISIBLE);
@@ -143,6 +152,7 @@ public class SearchListActivity extends ActionBarActivity {
         mediaPlayer = new MediaPlayer();
 
         fileName = (TextView)findViewById(R.id.tv_filename_search);
+        listEmpty = (TextView)findViewById(R.id.tv_listempty_search);
         startTimeField =(TextView)findViewById(R.id.tv_start_search);
         endTimeField =(TextView)findViewById(R.id.tv_end_search);
         seekbar = (SeekBar)findViewById(R.id.sb_search);
@@ -152,6 +162,7 @@ public class SearchListActivity extends ActionBarActivity {
         llOnline =(LinearLayout)findViewById(R.id.ll_online_search);
         llPlayer =(LinearLayout)findViewById(R.id.player_layout_main);
         llPlayer.setVisibility(View.GONE);
+        pbOnline = (ProgressBar)findViewById(R.id.pb_online_search);
         etSearch = (EditText)findViewById(R.id.et_main);
 
         String sSearch = getIntent().getStringExtra("searchString");
@@ -430,6 +441,7 @@ public class SearchListActivity extends ActionBarActivity {
     }
 
     public void callDownloadService(){
+        pbOnline.setVisibility(View.VISIBLE);
         Intent serviceIntent = new Intent(SearchListActivity.this,SeekDataDownloadService.class);
         serviceIntent.putExtra("searchString",etSearch.getText().toString());
 //        serviceIntent.putExtra("mode",mode);
@@ -440,16 +452,18 @@ public class SearchListActivity extends ActionBarActivity {
     public void startPopulatingList(){
         int mode = globalMode;
         if(!etSearch.getText().toString().equals("")) {
-
+            listEmpty.setVisibility(View.GONE);
             ArrayList<SearchResult> totList = Utilities.searchThruFiles(etSearch.getText().toString());
 
             boolean goFlag = true;
+            boolean onlineFlag = false;
             if(searchListAdapter!=null)
                 searchListAdapter.clear();
 
             if(mode==Constants.RB_ONLINE) {
                 totList.clear();
                 callDownloadService();
+                onlineFlag = true;
                 goFlag = false;
             }
             else if(mode==Constants.RB_LOCAL) {
@@ -457,16 +471,21 @@ public class SearchListActivity extends ActionBarActivity {
             }
             else{
                 callDownloadService();
+                onlineFlag = true;
             }
+
             if(goFlag && totList!=null && totList.size()>0){
 
                 searchArray.clear();
                 searchArray.addAll(totList);
                 if(searchListAdapter!=null)
                     searchListAdapter.notifyDataSetChanged();
+                listEmpty.setVisibility(View.GONE);
 
-
+            }else if(goFlag && !onlineFlag){ //local list is empty and no online search happening
+                listEmpty.setVisibility(View.VISIBLE);
             }
+
         }
         //else
         //    Toast.makeText(SearchListActivity.this,"Enter valid stuff",Toast.LENGTH_SHORT).show();
