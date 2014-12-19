@@ -45,9 +45,11 @@ public class SearchListAdapter extends ArrayAdapter {
     Runnable runnable;
     Button bPause,bPlay;
     TextView fileName;
+    String searchString;
 
     public SearchListAdapter(Context context, ArrayList<SearchResult> searchList, MediaPlayer mediaPlayer,
-                             SeekBar seekbar,Handler seekHandler,Runnable runnable,Button bPause, Button bPlay,TextView fileName) {
+                             SeekBar seekbar,Handler seekHandler,Runnable runnable,Button bPause, Button bPlay,
+                             TextView fileName,String searchString) {
         super(context, R.layout.single_list_item_string_search, searchList);
         this.context = context;
         this.searchList = searchList;
@@ -58,6 +60,7 @@ public class SearchListAdapter extends ArrayAdapter {
         this.bPlay = bPlay;
         this.bPause = bPause;
         this.fileName = fileName;
+        this.searchString = searchString;
 
     }
 
@@ -76,7 +79,8 @@ public class SearchListAdapter extends ArrayAdapter {
         tvName.setText(searchResult.getFileName().replace(".txt", ".mp3") + " : " + searchResult.getSeekString());
 
         final TextView tvSubs = (TextView) row.findViewById(R.id.tv_search_sli);
-        tvSubs.setText(searchResult.getSubtitle());
+        String processedString = Utilities.processSubtitle(searchResult.getSubtitle(),searchString);
+        tvSubs.setText(processedString);
 
         final TextView tvStatus = (TextView) row.findViewById(R.id.tv_status_sli);
         if(searchResult.filePath.contains("https://"))

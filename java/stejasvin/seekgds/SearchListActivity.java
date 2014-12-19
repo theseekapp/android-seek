@@ -351,7 +351,8 @@ public class SearchListActivity extends ActionBarActivity {
 //            return;
 //        }
         ListView list = (ListView)findViewById(R.id.list_search);
-        searchListAdapter =new SearchListAdapter(this,searchArray,mediaPlayer,seekbar,myHandler,UpdateSongTime,bPause,bPlay,fileName);
+        searchListAdapter =new SearchListAdapter(this,searchArray,mediaPlayer,seekbar,myHandler,UpdateSongTime,
+                bPause,bPlay,fileName,etSearch.getText().toString());
         list.setAdapter(searchListAdapter);
         //onlineListView.setVisibility(View.GONE);
         //llOnline.setVisibility(View.VISIBLE);
